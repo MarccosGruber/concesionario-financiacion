@@ -60,14 +60,19 @@ app.post('/api/solicitar-financiacion', async (req, res) => {
     // 💬 Mensaje profesional con ambas opciones de pago
     const mensaje = `
 Hola ${data.nombre} 👋
-Gracias por tu interés en la ${data.vehiculo}. 🏍️
+Ya vimos tu interés en la ${data.vehiculo}. 🏍️
 Precio estimado: *$${data.precio.toLocaleString()}*
 
-Estamos analizando el mejor financiamiento adaptado a tus posibilidades ✅
+Estamos analizando el mejor financiamiento adaptado a tu perfil ✅
 
 En breve seras contactado por un asesor ⏳
 
 Gracias por elegirnos, estamos para ayudarte 🙌
+
+*¿Como te gustaria ser contactado?*
+
+*(“Por Mensaje”)*
+*(“Por Llamada”)*
 `;
 
     // Enviar mensaje por WhatsApp
