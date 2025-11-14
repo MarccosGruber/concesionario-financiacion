@@ -8,6 +8,8 @@ import { sendWhatsApp } from '../integrations/whatsapp.js';
 import { getMpLink } from '../integrations/mercadoPago.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import express from "express";
+import axios from "axios";
 
 const app = express();
 app.use(cors());
@@ -99,3 +101,46 @@ start().catch(err => {
   console.error('Fallo al iniciar:', err);
   process.exit(1);
 });
+
+const router = express.Router();
+
+// ENVÍA MENSAJE WHATSAPP
+router.post("/send-whatsapp", async (req, res) => {
+    try {
+        const token = "TU_TOKEN_AQUÍ"; 
+        const phoneNumberId = "897550086768330"; // el número de prueba que da Meta
+
+        const response = await axios.post(
+            `https://graph.facebook.com/v20.0/${phoneNumberId}/messages`,
+            {
+                messaging_product: "whatsapp",
+                to: "5492954528165",
+                type: "template",
+                template: {
+                    name: "hello_world",
+                    language: { code: "en_US" }
+                }
+            },
+            {
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json"
+                }
+            }
+        );
+
+        res.json({
+            ok: true,
+            meta: response.data
+        });
+
+    } catch (error) {
+        console.error(error.response?.data || error.message);
+        res.status(500).json({
+            ok: false,
+            error: error.response?.data || error.message
+        });
+    }
+});
+
+export default router;

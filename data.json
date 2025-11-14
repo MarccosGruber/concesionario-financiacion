@@ -4,6 +4,8 @@
   "type": "template",
   "template": {
     "name": "hello_world",
-    "language": { "code": "en_US" }
+    "language": {
+      "code": "en_US"
+    }
   }
 }
