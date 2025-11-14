@@ -47,11 +47,12 @@ app.post('/api/solicitar-financiacion', async (req, res) => {
   try {
     const id = await saveSolicitud(data);
 
-    const mpLink = getMpLink({
-      vehiculo: data.vehiculo,
-      precio: data.precio,
-      nombre: data.nombre
-    });
+await sendWhatsAppMeta(
+  data.telefono,
+  data.nombre,
+  data.vehiculo
+);
+
 
     // Template message via WhatsApp API (Meta)
     await sendWhatsAppMeta(data.telefono);
