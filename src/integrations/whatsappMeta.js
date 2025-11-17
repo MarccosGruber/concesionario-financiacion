@@ -12,7 +12,7 @@ export async function sendWhatsAppMeta(telefono, nombre, vehiculo) {
                 to: telefono,
                 type: "template",
                 template: {
-                    name: "financiacion_saludo",
+                    name: "concecionario1",
                     language: { code: "es_AR" },
                     components: [
                         {
