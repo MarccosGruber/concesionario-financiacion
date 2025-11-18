@@ -1,377 +1,86 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Financiación — Concesionario (Completar Nombre)</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Concesionario — Inicio</title>
 
-  <style>
-    :root {
-      --primary: #111;
-      --border: #e5e7eb;
-      --accent: #facc15;
-      --bg-light: #fafafa;
-    }
+<style>
+body{margin:0;font-family:Inter,system-ui;background:#fff;color:#111;}
+header{
+  position:fixed;top:0;width:100%;background:#fff;border-bottom:1px solid #eee;
+  padding:14px 20px;z-index:1000;display:flex;justify-content:center;
+}
+header .brand{font-size:20px;font-weight:700;}
 
-    body {
-      margin: 0;
-      font-family: "Inter", system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
-      background: #fff;
-      color: var(--primary);
-    }
+#hero{
+  height:100vh;background:url('./categorias/hero.jpg') center/cover no-repeat;
+  display:flex;flex-direction:column;justify-content:end;align-items:center;
+  text-align:center;color:rgb(0, 0, 0);text-shadow:0 3px 7px rgba(255, 255, 255, 0.6);padding:20px;
+}
+#hero button{
+  padding:10px 22px;border-radius:999px;background:black;color:white;
+  border:none;cursor:pointer;font-size:15px;margin-top:20px;
+}
 
-    header {
-      position: sticky;
-      top: 0;
-      background: #fff;
-      border-bottom: 1px solid var(--border);
-      padding: 20px 40px;
-      font-weight: 600;
-      font-size: 20px;
-      z-index: 50;
-      box-shadow: 0 1px 6px rgba(0,0,0,0.03);
-    }
-
-    .container {
-      max-width: 1440px;
-      margin: 0 auto;
-      padding: 48px 48px 80px;
-    }
-
-    h1 {
-      text-align: center;
-      font-size: 38px;
-      margin-bottom: 6px;
-    }
-
-    .subtitle {
-      text-align: center;
-      color: #555;
-      margin-bottom: 40px;
-      font-size: 17px;
-    }
-
-    .steps {
-      display: flex;
-      justify-content: center;
-      gap: 10px;
-      margin-bottom: 40px;
-      flex-wrap: wrap;
-    }
-
-    .step {
-      padding: 10px 26px;
-      border-radius: 999px;
-      border: 1px solid var(--border);
-      font-size: 15px;
-      background: var(--bg-light);
-      cursor: pointer;
-      transition: all 0.2s ease;
-    }
-
-    .step.active {
-      background: var(--primary);
-      color: #fff;
-      border-color: var(--primary);
-    }
-
-    .grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 32px;
-    }
-
-    .card {
-      border: 1px solid #eee;
-      border-radius: 18px;
-      overflow: hidden;
-      cursor: pointer;
-      background: #fff;
-      transition: all 0.25s ease;
-      position: relative;
-    }
-
-    .card:hover {
-      transform: translateY(-6px);
-      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-    }
-
-    .card img {
-      width: 100%;
-      height: 320px;
-      object-fit: cover;
-      transition: transform 0.3s ease;
-    }
-
-    .card:hover img {
-      transform: scale(1.05);
-    }
-
-    .card-body {
-      padding: 18px 20px;
-    }
-
-    .card-body h3 {
-      margin: 0;
-      font-size: 20px;
-    }
-
-    .price {
-      margin-top: 8px;
-      font-weight: 600;
-      font-size: 18px;
-      color: var(--primary);
-    }
-
-    /* FORM */
-    .form-box {
-      background: #fff;
-      padding: 36px;
-      border-radius: 16px;
-      border: 1px solid #eee;
-      max-width: 540px;
-      margin: 0 auto;
-      box-shadow: 0 8px 25px rgba(0,0,0,0.05);
-      opacity: 0;
-      transform: translateY(20px);
-      transition: all 0.4s ease;
-    }
-
-    .form-box.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    label {
-      display: block;
-      font-size: 15px;
-      margin-bottom: 6px;
-    }
-
-    input, select {
-      width: 100%;
-      padding: 12px;
-      border-radius: 10px;
-      border: 1px solid #ddd;
-      margin-bottom: 18px;
-      font-size: 15px;
-    }
-
-    button {
-      width: 100%;
-      padding: 14px;
-      background: var(--primary);
-      color: white;
-      border: none;
-      border-radius: 10px;
-      font-size: 16px;
-      cursor: pointer;
-      font-weight: 600;
-      transition: all 0.2s ease;
-    }
-
-    button:hover {
-      background: #333;
-    }
-
-    .ok {
-      display: none;
-      background: #d1fae5;
-      color: #065f46;
-      padding: 12px;
-      margin-top: 16px;
-      border-radius: 8px;
-      text-align: center;
-    }
-
-    .err {
-      display: none;
-      background: #fee2e2;
-      color: #991b1b;
-      padding: 12px;
-      margin-top: 16px;
-      border-radius: 8px;
-      text-align: center;
-    }
-
-    .moto-resumen {
-      display: flex;
-      align-items: center;
-      gap: 16px;
-      margin-bottom: 24px;
-      border-bottom: 1px solid #eee;
-      padding-bottom: 14px;
-    }
-
-    .moto-resumen img {
-      width: 120px;
-      height: 80px;
-      border-radius: 10px;
-      object-fit: cover;
-    }
-
-    /* ANIMACIONES PASOS */
-    #paso1, #paso2 {
-      transition: opacity 0.4s ease, transform 0.4s ease;
-    }
-
-    #paso1.fade-out, #paso2.fade-out {
-      opacity: 0;
-      transform: translateY(-10px);
-      pointer-events: none;
-    }
-
-    #paso2.fade-in {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    @media (max-width: 768px) {
-      h1 { font-size: 30px; }
-      .card img { height: 240px; }
-      .container { padding: 32px; }
-    }
-  </style>
+#categorias{padding:60px 20px;max-width:1100px;margin:auto;}
+#categorias h2{text-align:center;font-size:28px;margin-bottom:30px;}
+.grid-cat{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:28px;}
+.cat-card{text-align:center;cursor:pointer;}
+.cat-card img{width:100%;height:200px;object-fit:cover;border-radius:14px;}
+</style>
 </head>
 
 <body>
-<header>Concesionario (Completar Nombre)</header>
 
-<div class="container">
-  <h1>Solicitar financiación</h1>
-  <p class="subtitle">Completá dos pasos simples para avanzar</p>
+<header><div class="brand">Concesionario</div></header>
 
-  <div class="steps">
-    <div id="step1btn" class="step active">1 — Elegir moto</div>
-    <div id="step2btn" class="step">2 — Datos personales</div>
-  </div>
+<section id="hero">
+  <h1>Elegí tu moto ideal</h1>
+  <p>Seleccioná una marca para continuar</p>
+  <button onclick="document.getElementById('categorias').scrollIntoView({behavior:'smooth'})">
+    Ver categorías
+  </button>
+</section>
 
-  <div id="paso1">
-    <div class="grid" id="vehiculos-grid"></div>
-  </div>
+<section id="categorias">
+  <h2>Categorías</h2>
 
-  <div id="paso2" style="display:none;">
-    <div class="form-box" id="formBox">
-      <div class="moto-resumen" id="motoResumen"></div>
-
-      <form id="form">
-        <label>Nombre y apellido</label>
-        <input id="nombre" required placeholder="Juan Pérez" />
-
-        <label>Teléfono (WhatsApp)</label>
-        <input id="telefono" required placeholder="+54911..." />
-
-        <label>DNI</label>
-        <input id="dni" required placeholder="40123123" />
-
-        <input type="hidden" id="vehiculo" />
-        <input type="hidden" id="precio" />
-
-        <label style="display:flex; align-items:center; gap:8px;">
-          <input type="checkbox" id="consentimiento" required />
-          Acepto el uso de mis datos para gestionar la financiación.
-        </label>
-
-        <button type="submit">Enviar solicitud</button>
-
-        <div id="ok" class="ok">✅ ¡Solicitud enviada! Te llegará un WhatsApp.</div>
-        <div id="err" class="err"></div>
-      </form>
+  <div class="grid-cat">
+    <div class="cat-card" onclick="location.href='financiacion.html?cat=Corven'">
+      <img src="./categorias/corven.jpg"><p>Corven</p>
     </div>
+
+    <div class="cat-card" onclick="location.href='financiacion.html?cat=Honda'">
+      <img src="./categorias/honda.jpg"><p>Honda</p>
+    </div>
+
+    <div class="cat-card" onclick="location.href='financiacion.html?cat=Yamaha'">
+      <img src="./categorias/yamaha.jpg"><p>Yamaha</p>
+    </div>
+
+    <div class="cat-card" onclick="location.href='financiacion.html?cat=Motomel'">
+      <img src="./categorias/motomel.jpg"><p>Motomel</p>
+    </div>
+    
+        <div class="cat-card" onclick="location.href='financiacion.html?cat=Corven'">
+      <img src="./categorias/corven.jpg"><p>Corven</p>
+    </div>
+
+    <div class="cat-card" onclick="location.href='financiacion.html?cat=Honda'">
+      <img src="./categorias/honda.jpg"><p>Honda</p>
+    </div>
+
+    <div class="cat-card" onclick="location.href='financiacion.html?cat=Yamaha'">
+      <img src="./categorias/yamaha.jpg"><p>Yamaha</p>
+    </div>
+
+    <div class="cat-card" onclick="location.href='financiacion.html?cat=Motomel'">
+      <img src="./categorias/motomel.jpg"><p>Motomel</p>
+    </div>
+    
   </div>
-</div>
+</section>
 
-<script>
-  const catalogo = [
-    { nombre: "Yamaha MT03", precio: 11400000, img: "https://www.yamaha-motor.com.ar/images/productos/4ebcb805d33e9589889a41a19cfec356_full_size.jpg?661" },
-    { nombre: "Rouser 200", precio: 4980000, img: "https://corrientesmotos.com.ar/wp-content/uploads/2020/05/pcx-160-imagen-1-81.png" },
-    { nombre: "Honda Titan", precio: 4600000, img: "https://motos.fussetti.com/wp-content/uploads/2020/03/cg-titan-2020.png" },
-    { nombre: "Yamaha MT03", precio: 11400000, img: "https://www.yamaha-motor.com.ar/images/productos/4ebcb805d33e9589889a41a19cfec356_full_size.jpg?661" },
-    { nombre: "Rouser 200", precio: 4980000, img: "https://corrientesmotos.com.ar/wp-content/uploads/2020/05/pcx-160-imagen-1-81.png" },
-    { nombre: "Honda Titan", precio: 4600000, img: "https://motos.fussetti.com/wp-content/uploads/2020/03/cg-titan-2020.png" },
-    { nombre: "Yamaha MT03", precio: 11400000, img: "https://www.yamaha-motor.com.ar/images/productos/4ebcb805d33e9589889a41a19cfec356_full_size.jpg?661" },
-    { nombre: "Rouser 200", precio: 4980000, img: "https://corrientesmotos.com.ar/wp-content/uploads/2020/05/pcx-160-imagen-1-81.png" },
-    { nombre: "Honda Titan", precio: 4600000, img: "https://motos.fussetti.com/wp-content/uploads/2020/03/cg-titan-2020.png" },
-  ];
-
-  const grid = document.getElementById("vehiculos-grid");
-  const paso1 = document.getElementById("paso1");
-  const paso2 = document.getElementById("paso2");
-  const formBox = document.getElementById("formBox");
-  const step1btn = document.getElementById("step1btn");
-  const step2btn = document.getElementById("step2btn");
-
-  function renderMotos() {
-    grid.innerHTML = catalogo.map((moto, i) => `
-      <div class="card" onclick="seleccionarMoto(${i})">
-        <img src="${moto.img}" alt="${moto.nombre}">
-        <div class="card-body">
-          <h3>${moto.nombre}</h3>
-          <div class="price">$${moto.precio.toLocaleString()}</div>
-        </div>
-      </div>
-    `).join('');
-  }
-  renderMotos();
-
-  window.seleccionarMoto = (i) => {
-    const moto = catalogo[i];
-    paso1.classList.add("fade-out");
-    setTimeout(() => {
-      paso1.style.display = "none";
-      paso2.style.display = "block";
-      paso2.classList.add("fade-in");
-      formBox.classList.add("visible");
-      step1btn.classList.remove("active");
-      step2btn.classList.add("active");
-    }, 400);
-
-    document.getElementById("vehiculo").value = moto.nombre;
-    document.getElementById("precio").value = moto.precio;
-
-    document.getElementById("motoResumen").innerHTML = `
-      <img src="${moto.img}" alt="${moto.nombre}">
-      <div>
-        <strong>${moto.nombre}</strong><br>
-        $${moto.precio.toLocaleString()}
-      </div>
-    `;
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
-  document.getElementById("form").addEventListener("submit", async (e) => {
-    e.preventDefault();
-    const data = {
-      nombre: document.getElementById("nombre").value.trim(),
-      telefono: document.getElementById("telefono").value.trim(),
-      dni: document.getElementById("dni").value.trim(),
-      vehiculo: document.getElementById("vehiculo").value,
-      precio: Number(document.getElementById("precio").value),
-      consentimiento: document.getElementById("consentimiento").checked
-    };
-
-    const okEl = document.getElementById("ok");
-    const errEl = document.getElementById("err");
-    okEl.style.display = "none";
-    errEl.style.display = "none";
-
-    try {
-      const res = await fetch("/api/solicitar-financiacion", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data)
-      });
-
-      const json = await res.json();
-      if (!res.ok) throw new Error(json.error || "Error inesperado");
-
-      okEl.style.display = "block";
-      e.target.reset();
-    } catch (err) {
-      errEl.textContent = "❌ " + err.message;
-      errEl.style.display = "block";
-    }
-  });
-</script>
 </body>
 </html>

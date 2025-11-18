@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Solicitar financiación</title>
+
+<style>
+body{margin:0;font-family:Inter,system-ui;background:#fff;color:#111;}
+header{
+  position:fixed;top:0;width:100%;background:#fff;border-bottom:1px solid #eee;
+  padding:14px 20px;z-index:1000;display:flex;justify-content:center;
+}
+header .brand{font-size:20px;font-weight:700;}
+
+.container{max-width:1200px;margin:0 auto;padding:80px 20px;}
+
+h1{text-align:center;font-size:30px;margin-bottom:6px;}
+.subtitle{text-align:center;color:#666;margin-bottom:28px;}
+
+.steps{display:flex;gap:10px;justify-content:center;margin-bottom:26px;}
+.step{
+  padding:6px 16px;border-radius:999px;border:1px solid #ddd;background:#f5f5f5;
+  font-size:14px;cursor:pointer;
+}
+.step.active{background:#111;color:white;border-color:#111;}
+
+/* Subcategorías */
+.filters{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-bottom:20px;}
+
+.chip{
+  padding:6px 18px;
+  border-radius:999px;
+  border:1px solid #ddd;
+  background:#f8f8f8;
+  cursor:pointer;
+  font-size:13px;
+  display:inline-block;
+  width:auto;
+  white-space:nowrap;
+  transition:0.5s;
+  color:#252525;
+}
+.chip:hover{background:#000;color:#fff;}
+.chip.active{background:#111;color:#fff;border-color:#111;}
+
+/* Grid motos */
+.grid{
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  gap:24px;margin-top:10px;
+}
+.card{
+  border:1px solid #eee;
+  border-radius:16px;
+  overflow:hidden;
+  cursor:pointer;
+  width:100%;
+  max-width:450px;
+  margin:0 auto;
+}
+
+.card img{
+  height:200px;max-width:300px;width:100%;object-fit:cover;object-position:center;display:block;margin:0 auto;
+}
+
+/* Formulario */
+.form-box{
+  border:1px solid #eee;
+  padding:30px; /* 👈 mejora del aire interno */
+  border-radius:14px;
+  max-width:480px;
+  margin:0 auto;
+  display:none;
+  background:white;
+  box-shadow:0 4px 20px rgba(0,0,0,0.06);
+}
+
+.moto-resumen{
+  display:flex;
+  gap:16px;
+  align-items:center;
+  border-bottom:1px solid #ddd;
+  padding-bottom:12px;
+  margin-bottom:18px;
+}
+
+.moto-resumen img{
+  width:110px;height:80px;object-fit:cover;border-radius:10px;
+}
+
+.moto-resumen div{
+  font-size:15px;
+  font-weight:500;
+}
+
+/* Labels */
+label{
+  font-size:14px;
+  font-weight:500;
+  margin-bottom:4px;
+  display:block;
+}
+
+/* Inputs y botones */
+input,button{
+  width:100%;
+  padding:12px;
+  border-radius:8px;
+  margin-bottom:16px;
+  border:1px solid #ddd;
+  background:#fafafa;
+  font-size:14px;
+  outline:none;
+  transition:0.2s;
+  box-sizing:border-box; /* 👈 FIX DEL ESPACIADO */
+}
+
+input:focus{
+  border-color:#111;
+  background:white;
+  box-shadow:0 0 0 2px rgba(0,0,0,0.05);
+}
+
+button{
+  background:#111;
+  color:white;
+  border:none;
+  font-weight:600;
+  margin-top:10px;
+}
+
+/* Consentimiento */
+.consent{
+  display:flex;
+  align-items:flex-start;
+  gap:8px;
+  font-size:13px;
+  margin:4px 0 16px 0;
+  line-height:1.3;
+}
+
+.consent input{
+  width:auto;
+  margin-top:2px;
+}
+
+/* Mensajes */
+.ok{
+  display:none;background:#d1fae5;color:#065f46;padding:10px;
+  border-radius:8px;margin-top:10px;font-size:14px;text-align:center;
+}
+.err{
+  display:none;background:#fee2e2;color:#b91c1c;padding:10px;
+  border-radius:8px;margin-top:10px;font-size:14px;text-align:center;
+}
+</style>
+
+</head>
+
+<body>
+
+<header><div class="brand">Solicitar financiación</div></header>
+
+<div class="container">
+
+  <h1>Solicitar financiación</h1>
+  <p class="subtitle">Elegí una moto y completá tus datos. Es rápido y sin compromiso.</p>
+
+  <div class="steps">
+    <div id="step1btn" class="step active">1 — Elegir moto</div>
+    <div id="step2btn" class="step">2 — Datos personales</div>
+  </div>
+
+  <div class="filters" id="subcats"></div>
+
+  <div id="paso1">
+    <div class="grid" id="vehiculos-grid"></div>
+  </div>
+
+  <!-- Paso 2 -->
+  <div id="paso2" style="display:none;">
+    <div class="form-box" id="formBox">
+
+      <div id="motoResumen" class="moto-resumen"></div>
+
+      <form id="form">
+
+        <label> Nombre y apellido</label>
+        <input id="nombre" type="text" required placeholder="Juan Pérez">
+
+        <label>Teléfono (WhatsApp)</label>
+        <input id="telefono" type="tel" required placeholder="+54911...">
+
+        <label>DNI</label>
+        <input id="dni" type="number" required placeholder="40123123">
+
+        <input type="hidden" id="vehiculo">
+        <input type="hidden" id="precio">
+
+        <label class="consent">
+          <input type="checkbox" id="consentimiento" required>
+          Acepto el uso de mis datos para gestionar la financiación.
+        </label>
+
+        <button style="margin-top: 10px;" type="submit">Enviar solicitud</button>
+
+        <div id="ok" class="ok">✅ ¡Solicitud enviada! Te llegará un WhatsApp.</div>
+        <div id="err" class="err"></div>
+
+      </form>
+
+    </div>
+  </div>
+
+</div>
+
+<script>
+
+// REFERENCIAS A PASOS Y FORM BOX
+const paso1 = document.getElementById("paso1");
+const paso2 = document.getElementById("paso2");
+const formBox = document.getElementById("formBox");
+
+// GET categoría desde URL
+const urlParams = new URLSearchParams(window.location.search);
+const marca = urlParams.get("cat");
+
+// BASE DE DATOS
+const catalogo=[
+ {nombre:"Corven Triax 150",categoria:"Corven",sub:"150",precio:4200000,img:"./Motos/Corven Triax 150.jpg"},
+ {nombre:"Motomel Blitz 110",categoria:"Motomel",sub:"110",precio:2500000,img:"./Motos/Motomel Blitz 110.jpg"},
+ {nombre:"Honda Titan 150",categoria:"Honda",sub:"150",precio:4600000,img:"./Motos/Honda Titan 150.jpg"},
+ {nombre:"Honda Wave 110",categoria:"Honda",sub:"110",precio:3100000,img:"./Motos/Honda Wave 110.jpg"},
+  {nombre:"Honda Wave 110",categoria:"Honda",sub:"110",precio:3100000,img:"./Motos/Honda Wave 110.jpg"},
+ {nombre:"Honda Wave 110",categoria:"Honda",sub:"110",precio:3100000,img:"./Motos/Honda Wave 110.jpg"},
+
+ {nombre:"Yamaha Crypton 110",categoria:"Yamaha",sub:"110",precio:3200000,img:"./Motos/Yamaha Crypton 110.jpg"},
+ {nombre:"Yamaha FZ 250",categoria:"Yamaha",sub:"250",precio:7200000,img:"./Motos/Yamaha FZ 250.jpg"}
+];
+
+// SUBCATEGORÍAS
+function renderSubcats(){
+  const subcats=[...new Set(catalogo.filter(m=>m.categoria===marca).map(m=>m.sub))];
+  const box=document.getElementById("subcats");
+
+  box.innerHTML =
+    `<button class='chip active' onclick="renderMotos()">Todas</button>` +
+    subcats.map(s=>`<button class='chip' onclick="renderMotos('${s}')">${s}</button>`).join('');
+}
+
+// MOSTRAR MOTOS
+function renderMotos(sub=null){
+  const lista=catalogo.filter(m=>m.categoria===marca && (!sub || m.sub===sub));
+
+  document.getElementById("vehiculos-grid").innerHTML =
+    lista.map(m=>`
+      <div class='card' onclick="seleccionarMoto('${m.nombre}')">
+        <img src='${m.img}'>
+        <div style="padding:12px;">
+          <h3>${m.nombre}</h3>
+          <div>$${m.precio.toLocaleString()}</div>
+        </div>
+      </div>
+    `).join('');
+}
+
+// PASO 2
+function seleccionarMoto(nombre){
+  const m = catalogo.find(x=>x.nombre===nombre);
+
+  paso1.style.display = "none";
+  paso2.style.display = "block";
+  formBox.style.display = "block";
+
+  document.getElementById("subcats").style.display = "none";  // ocultar filtros
+
+  document.getElementById("vehiculo").value = m.nombre;
+  document.getElementById("precio").value = m.precio;
+
+  document.getElementById("motoResumen").innerHTML = `
+    <img src="${m.img}">
+    <div><strong>${m.nombre}</strong><br>$${m.precio.toLocaleString()}</div>
+  `;
+}
+
+// ENVIAR FORMULARIO
+document.getElementById("form").addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const data = {
+    nombre: document.getElementById("nombre").value.trim(),
+    telefono: document.getElementById("telefono").value.trim(),
+    dni: document.getElementById("dni").value.trim(),
+    vehiculo: document.getElementById("vehiculo").value,
+    precio: Number(document.getElementById("precio").value),
+    consentimiento: document.getElementById("consentimiento").checked
+  };
+
+  const okEl = document.getElementById("ok");
+  const errEl = document.getElementById("err");
+
+  okEl.style.display = "none";
+  errEl.style.display = "none";
+
+  try {
+    const res = await fetch("/api/solicitar-financiacion", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data)
+    });
+
+    const json = await res.json();
+    if (!res.ok) throw new Error(json.error || "Error inesperado");
+
+    okEl.style.display = "block";
+    e.target.reset();
+
+  } catch (err) {
+    errEl.textContent = "❌ " + err.message;
+    errEl.style.display = "block";
+  }
+});
+
+// INICIALIZAR
+renderSubcats();
+renderMotos();
+
+</script>
+
+</body>
+</html>
