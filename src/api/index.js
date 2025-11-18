@@ -13,10 +13,18 @@ const app = express();
 app.use(cors());
 app.use(json());
 
+// Obtener ruta real del archivo
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-app.use(express.static(path.join(__dirname, '..', 'frontend')));
+// 📌 Servir archivos estáticos desde /src/frontend
+const FRONTEND_PATH = path.join(__dirname, '..', 'frontend');
+app.use(express.static(FRONTEND_PATH));
+
+// 📌 Ruta raíz → cargar index.html
+app.get('/', (_req, res) => {
+  res.sendFile(path.join(FRONTEND_PATH, 'index.html'));
+});
 
 // healthcheck
 app.get('/health', (_req, res) => res.json({ ok: true }));
@@ -35,41 +43,45 @@ const schema = z.object({
 app.post('/api/solicitar-financiacion', async (req, res) => {
   const parsed = schema.safeParse(req.body);
   if (!parsed.success) {
-    return res.status(400).json({ error: 'Datos inválidos', detalles: parsed.error.flatten() });
+    return res.status(400).json({
+      error: 'Datos inválidos',
+      detalles: parsed.error.flatten()
+    });
   }
 
   const data = parsed.data;
 
   if (!data.consentimiento) {
-    return res.status(400).json({ error: 'Debe aceptar términos y condiciones' });
+    return res.status(400).json({
+      error: 'Debe aceptar términos y condiciones'
+    });
   }
 
   try {
     const id = await saveSolicitud(data);
 
-await sendWhatsAppMeta(
-  data.telefono,
-  data.nombre,
-  data.vehiculo
-);
-
-
-    // Template message via WhatsApp API (Meta)
-    await sendWhatsAppMeta(data.telefono);
+    await sendWhatsAppMeta(
+      data.telefono,
+      data.nombre,
+      data.vehiculo
+    );
 
     res.json({ ok: true, solicitudId: id });
 
   } catch (e) {
     console.error(e);
-    res.status(500).json({ error: 'Error interno', detalle: e?.message || e });
+    res.status(500).json({
+      error: 'Error interno',
+      detalle: e?.message || e
+    });
   }
 });
 
 async function start() {
   await initDb();
-  app.listen(config.port, () => {
-    console.log(`MVP escuchando en http://localhost:${config.port}`);
-  });
+  app.listen(config.port, () =>
+    console.log(`MVP escuchando en http://localhost:${config.port}`)
+  );
 }
 
 start().catch(err => {
