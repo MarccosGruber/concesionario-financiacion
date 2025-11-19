@@ -30,14 +30,9 @@ export const config = {
     from: required('TWILIO_WHATSAPP_FROM'),
   },
 
-  // Configuración de Meta (para cuando tengas acceso)
-  meta: {
-    phoneNumberId: process.env.META_PHONE_NUMBER_ID || '',
-    wabaId: process.env.META_WABA_ID || '',
-    accessToken: process.env.META_ACCESS_TOKEN || '',
-    templateName: process.env.META_TEMPLATE_NAME || 'financiacion_inicial',
-    templateLang: process.env.META_TEMPLATE_LANG || 'es_AR',
-  },
+  // Whatsaap
+  whatsappPhoneId: 897550086768330,   // ID del número
+  whatsappToken: EAAUyO75ogaQBPyNM6jlgOJnvhODaVJrZAnZCTb2ER5aqHZB8UfYmsS99dwtlzrZCmBru0UoXWCYaZCiMOXAEDy7izlbJQJW3ugqQDaKJPFUcMSMXb9X6D42zBfJz3vL0ZCngkVOVRhULETtfM5ErFNiQXY1khvAVwpUHDdPi1ehHtMGaXNJRpl116bVuHuUQkQCq85wskfki6tpKpXZB0JcuTYfFJ8PmJVZCv16LW2KZAy86ZBubZCOL8pD9CLVMJ6d6BSb6TWTcUhPkRX4k89OKLijHqTdJdLmwdLCsEJFDAZDZD,        // TOKEN (Identificador de acceso)
 
   // Enlace a Mercado Pago
   mpLink: required('MP_LINK'),
