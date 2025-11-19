@@ -1,4 +1,3 @@
-import fetch from "node-fetch";
 import { config } from "../config.js";
 
 // TEMPLATE:
@@ -27,6 +26,8 @@ export async function sendWhatsAppMeta(telefono, nombre, vehiculo) {
                 ]
             }
         };
+
+        
 
         const res = await fetch(url, {
             method: "POST",
