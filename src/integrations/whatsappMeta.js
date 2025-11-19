@@ -1,42 +1,54 @@
-import axios from "axios";
+import fetch from "node-fetch";
+import { config } from "../config.js";
+
+// TEMPLATE:
+// 1 = nombre
+// 2 = moto
 
 export async function sendWhatsAppMeta(telefono, nombre, vehiculo) {
     try {
-    const phoneNumberId = "897550086768330"; // tu número de prueba Meta
-    const token = "EAAUyO75ogaQBP9ZCFyAByQ63sVSLnpQQ1FXMfaxixcytZAAyQYD0bWiFAQIxSCFYLMZA6GmOFZB8U9MuWFILqKMQk9zbJuasEoJhtMaQb3rIstxJlCeq9OqmtkhNZBPZAH922cx2o9REogbQrTS0gOwAjG3QQy7KBDJ4kQZCcPEDNQErL0MznBIxhoQteg61r7ZArXWZAZCtJi1NkYoLLQ4OiEH27lxuBvL2BG4lgpEmtji0zy9xpSlvyQIuQbI1hKcgZDZD";
+        const url = `https://graph.facebook.com/v19.0/${config.whatsappPhoneId}/messages`;
 
-    const response = await axios.post(
-            `https://graph.facebook.com/v20.0/${phoneNumberId}/messages`,
-            {
-                messaging_product: "whatsapp",
-                to: telefono,
-                type: "template",
-                template: {
-                    name: "hello_world",
-                    language: { code: "en_US" },
-                    components: [
-                        {
-                            type: "body",
-                            parameters: [
-                                { type: "text", text: nombre },
-                                { type: "text", text: vehiculo }
-                            ]
-                        }
-                    ]
-                }
-            },
-            {
-                headers: {
-                    Authorization: `Bearer ${token}`,
-                    "Content-Type": "application/json"
-                }
+        const body = {
+            messaging_product: "whatsapp",
+            to: telefono,
+            type: "template",
+            template: {
+                name: "financiacion_saludo",
+                language: { code: "es_AR" },
+                components: [
+                    {
+                        type: "body",
+                        parameters: [
+                            { type: "text", text: nombre },
+                            { type: "text", text: vehiculo }
+                        ]
+                    }
+                ]
             }
-        );
+        };
 
-        return response.data;
+        const res = await fetch(url, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${config.whatsappToken}`,
+            },
+            body: JSON.stringify(body)
+        });
+
+        const json = await res.json();
+
+        if (!res.ok) {
+            console.error("Error WhatsApp:", json);
+            throw new Error("Error enviando mensaje de WhatsApp");
+        }
+
+        console.log("Mensaje enviado con éxito:", json);
+        return json;
 
     } catch (error) {
-        console.error("ERROR META:", error.response?.data || error);
+        console.error("Fallo en WhatsApp:", error);
         throw error;
     }
 }
