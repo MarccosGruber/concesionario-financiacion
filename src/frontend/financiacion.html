@@ -211,6 +211,32 @@ button{
   }
 }
 
+#hero {
+  position: relative;
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
+}
+
+#heroVideo {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.hero-text {
+  position: relative;
+  z-index: 2;
+  color: white;
+  text-shadow: 0 4px 10px rgba(0,0,0,0.8);
+  text-align: center;
+  top: 60%;
+  transform: translateY(-50%);
+}
+
 </style>
 </head>
 
@@ -410,14 +436,25 @@ function seleccionarMoto(nombre){
 document.getElementById("form").addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  const data = {
-    nombre: document.getElementById("nombre").value.trim(),
-    telefono: document.getElementById("telefono").value.trim(),
-    dni: document.getElementById("dni").value.trim(),
-    vehiculo: document.getElementById("vehiculo").value,
-    precio: Number(document.getElementById("precio").value),
-    consentimiento: document.getElementById("consentimiento").checked
-  };
+const rawTel = document.getElementById("telefono").value.trim();
+
+// Elimina +, espacios y todo lo que no sea número
+const telefonoLimpio = rawTel.replace(/\D/g, "");
+
+// Asegura que empiece con 54
+let telefonoFinal = telefonoLimpio;
+if (!telefonoFinal.startsWith("54")) {
+  telefonoFinal = "54" + telefonoFinal;
+}
+
+const data = {
+  nombre: document.getElementById("nombre").value.trim(),
+  telefono: telefonoFinal,
+  dni: document.getElementById("dni").value.trim(),
+  vehiculo: document.getElementById("vehiculo").value,
+  precio: Number(document.getElementById("precio").value),
+  consentimiento: document.getElementById("consentimiento").checked
+};
 
   const okEl = document.getElementById("ok");
   const errEl = document.getElementById("err");
