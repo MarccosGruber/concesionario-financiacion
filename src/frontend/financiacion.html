@@ -35,26 +35,20 @@ h1{text-align:center;font-size:30px;margin-bottom:6px;}
 }
 
 .chip{
-  padding:4px 14px;
+  padding:6px 18px;
   border-radius:999px;
   border:1px solid #ddd;
   background:#f8f8f8;
   cursor:pointer;
-  font-size:12px;
+  font-size:13px;
   display:inline-block;
+  width:auto;
   white-space:nowrap;
-  transition:0.2s;
+  transition:0.5s;
   color:#252525;
 }
-
-.chip:hover{
-  background:#000;
-  color:#fff;
-}
-
-.chip.active{
-  background:#111;color:#fff;border-color:#111;
-}
+.chip:hover{background:#000;color:#fff;}
+.chip.active{background:#111;color:#fff;border-color:#111;}
 
 /* Grid motos */
 .grid{
@@ -165,6 +159,34 @@ button{
   display:none;background:#fee2e2;color:#b91c1c;padding:10px;
   border-radius:8px;margin-top:10px;font-size:14px;text-align:center;
 }
+
+/* Animaciones suaves para cambio de pasos */
+.fade-in {
+  opacity: 0;
+  transform: translateY(15px);
+  animation: fadeIn .45s forwards ease;
+}
+
+.fade-out {
+  opacity: 1;
+  transform: translateY(0);
+  animation: fadeOut .35s forwards ease;
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeOut {
+  to {
+    opacity: 0;
+    transform: translateY(-15px);
+  }
+}
+
 </style>
 </head>
 
@@ -197,13 +219,13 @@ button{
       <form id="form">
 
         <label>Nombre y apellido</label>
-        <input id="nombre" type="text" required placeholder="Juan Pérez">
+        <input id="nombre" type="text" required placeholder="...">
 
         <label>Teléfono (WhatsApp)</label>
-        <input id="telefono" type="tel" required placeholder="+54911...">
+        <input id="telefono" type="tel" required placeholder="+54...">
 
         <label>DNI</label>
-        <input id="dni" type="number" required placeholder="40123123">
+        <input id="dni" type="number" required placeholder="...">
 
         <input type="hidden" id="vehiculo">
         <input type="hidden" id="precio">
@@ -232,33 +254,86 @@ const paso1 = document.getElementById("paso1");
 const paso2 = document.getElementById("paso2");
 const formBox = document.getElementById("formBox");
 
+
+
 // GET categoría
 const urlParams = new URLSearchParams(window.location.search);
 const marca = urlParams.get("cat");
 
 // BASE DE DATOS
 const catalogo=[
- {nombre:"Corven Triax 150",categoria:"Corven",sub:"150",precio:4200000,img:"./Motos/Corven Triax 150.jpg"},
- {nombre:"Motomel Blitz 110",categoria:"Motomel",sub:"110",precio:2500000,img:"./Motos/Motomel Blitz 110.jpg"},
- {nombre:"Honda Titan 150",categoria:"Honda",sub:"150",precio:4600000,img:"./Motos/Honda Titan 150.jpg"},
- {nombre:"Honda Wave 110",categoria:"Honda",sub:"110",precio:3100000,img:"./Motos/Honda Wave 110.jpg"},
- {nombre:"Yamaha Crypton 110",categoria:"Yamaha",sub:"110",precio:3200000,img:"./Motos/Yamaha Crypton 110.jpg"},
- {nombre:"Yamaha FZ 250",categoria:"Yamaha",sub:"250",precio:7200000,img:"./Motos/Yamaha FZ 250.jpg"}
+
+// HONDA
+
+  // 110cc
+  { nombre: "Honda Wave 110", categoria: "Honda", sub: ["110"], precio: 0, img: "Honda Wave 110.jpg" },
+  { nombre: "Honda Navi 110", categoria: "Honda", sub: ["110", "SCOOTERS"], precio: 0, img: "Honda Navi 110" },
+
+  // 125cc
+  { nombre: "Honda Biz 125", categoria: "Honda", sub: ["125", "SCOOTERS"], precio: 0, img: "Honda Biz 125" },
+
+  // 150cc
+  { nombre: "Honda CG Titan 150", categoria: "Honda", sub: ["150"], precio: 0, img: "Honda CG Titan 150" },
+  { nombre: "Honda CG Fan 150", categoria: "Honda", sub: ["150"], precio: 0, img: "Honda CG Fan 150" },
+
+  // On/off — 150 / 160 / 190
+  { nombre: "Honda XR 150L", categoria: "Honda", sub: ["150"], precio: 0, img: "Honda XR 150L" },
+  { nombre: "Honda XR 160 Tornado", categoria: "Honda", sub: ["160"], precio: 0, img: "Honda XR 160 Tornado" },
+  { nombre: "Honda XR 190L", categoria: "Honda", sub: ["190"], precio: 0, img: "Honda XR 190L" },
+
+  // Naked 160
+  { nombre: "Honda CB160F", categoria: "Honda", sub: ["160"], precio: 0, img: "Honda CB160F" },
+
+  // 250
+  { nombre: "Honda XR 250 Tornado", categoria: "Honda", sub: ["250"], precio: 0, img: "Honda XR 250 Tornado" },
+  { nombre: "Honda CB250 Twister", categoria: "Honda", sub: ["250"], precio: 0, img: "Honda CB250 Twister" },
+
+  // Scooters
+  { nombre: "Honda PCX 160", categoria: "Honda", sub: ["SCOOTERS", "160"], precio: 0, img: "Honda PCX 160" },
+  { nombre: "Honda Elite 125", categoria: "Honda", sub: ["SCOOTERS", "125"], precio: 0, img: "Honda Elite 125" },
+
+  // 300
+  { nombre: "Honda CB300F Twister", categoria: "Honda", sub: ["300"], precio: 0, img: "Honda CB300F Twister" },
+  { nombre: "Honda CBR300R", categoria: "Honda", sub: ["300"], precio: 0, img: "Honda CBR300R" },
+
+  // Adventure 300
+  { nombre: "Honda XRE 300", categoria: "Honda", sub: ["300"], precio: 0, img: "Honda XRE 300" },
+
+  // Alta gama (opcional)
+  { nombre: "Honda CB500X", categoria: "Honda", sub: ["500"], precio: 0, img: "Honda CB500X" },
+  { nombre: "Honda NC750X", categoria: "Honda", sub: ["750"], precio: 0, img: "Honda NC750X" },
+  { nombre: "Honda Africa Twin 1100", categoria: "Honda", sub: ["1100"], precio: 0, img: "Honda Africa Twin 1100" },
 ];
 
 // SUBCATEGORÍAS
-function renderSubcats(){
-  const subcats=[...new Set(catalogo.filter(m=>m.categoria===marca).map(m=>m.sub))];
+
+  function renderSubcats(){
+    const subcats = [
+    ...new Set(
+      catalogo
+        .filter(m => m.categoria === marca)
+        .flatMap(m => m.sub)   // aplana múltiples subcategorías
+    )
+  ];
+
   const box=document.getElementById("subcats");
 
   box.innerHTML =
     `<button class='chip active' onclick="renderMotos()">Todas</button>` +
-    subcats.map(s=>`<button class='chip' onclick="renderMotos('${s}')">${s}</button>`).join('');
+subcats.map(s=>{
+  const label = (s.toLowerCase() === "scooter") ? "SCOOTERS" : s;
+  return `<button class='chip' onclick="renderMotos('${s}')">${label}</button>`;
+}).join('');
+
 }
 
 // MOSTRAR MOTOS (sin precio)
 function renderMotos(sub=null){
-  const lista=catalogo.filter(m=>m.categoria===marca && (!sub || m.sub===sub));
+  const lista = catalogo.filter(m =>
+  m.categoria === marca &&
+  (!sub || m.sub.includes(sub))
+);
+
 
   document.getElementById("vehiculos-grid").innerHTML =
     lista.map(m=>`
@@ -269,24 +344,44 @@ function renderMotos(sub=null){
     `).join('');
 }
 
-// SELECCIONAR MOTO
 function seleccionarMoto(nombre){
   const m = catalogo.find(x=>x.nombre===nombre);
 
-  paso1.style.display = "none";
-  paso2.style.display = "block";
-  formBox.style.display = "block";
+  // Animación suave al ocultar paso 1
+  paso1.classList.add("fade-out");
 
+  setTimeout(() => {
+    paso1.style.display = "none";
+    paso1.classList.remove("fade-out");
+
+    // Mostrar paso 2 con animación suave
+    paso2.style.display = "block";
+    formBox.style.display = "block";
+    paso2.classList.add("fade-in");
+
+    // Marcar/desmarcar pasos
+    document.getElementById("step1btn").classList.remove("active");
+    document.getElementById("step2btn").classList.add("active");
+
+    // Scroll suave arriba
+    window.scrollTo({ top: 0, behavior: "smooth" });
+
+  }, 350);
+
+  // Ocultar subcategorías
   document.getElementById("subcats").style.display = "none";
 
+  // Completar datos ocultos
   document.getElementById("vehiculo").value = m.nombre;
   document.getElementById("precio").value = m.precio;
 
+  // Resumen
   document.getElementById("motoResumen").innerHTML = `
     <img src="${m.img}">
     <div><strong>${m.nombre}</strong></div>
   `;
 }
+
 
 // ENVIAR FORMULARIO
 document.getElementById("form").addEventListener("submit", async (e) => {
@@ -329,6 +424,64 @@ document.getElementById("form").addEventListener("submit", async (e) => {
 // INICIALIZAR
 renderSubcats();
 renderMotos();
+
+// 👉 Campo teléfono con +54 obligatorio
+const telInput = document.getElementById("telefono");
+
+// Siempre comenzar con +54
+telInput.addEventListener("focus", () => {
+  if (!telInput.value.startsWith("+54")) {
+    telInput.value = "+54 ";
+  }
+});
+
+// Evitar borrar el +54
+telInput.addEventListener("input", () => {
+  if (!telInput.value.startsWith("+54")) {
+    telInput.value = "+54 ";
+  }
+
+  // Quitar letras, dejar solo números después de +54
+  telInput.value = "+54 " + telInput.value.replace("+54", "").replace(/\D/g, "");
+});
+
+// Evitar borrar el prefijo con Backspace
+telInput.addEventListener("keydown", (e) => {
+  if (telInput.selectionStart <= 4 && (e.key === "Backspace" || e.key === "Delete")) {
+    e.preventDefault();
+  }
+});
+
+// 👉 Permitir volver al Paso 1 desde el botón "1 — Elegir moto"
+document.getElementById("step1btn").addEventListener("click", () => {
+
+  // Si ya estamos en paso 1, no hacer nada
+  if (paso1.style.display !== "none") return;
+
+  // Animación de salida del paso 2
+  paso2.classList.add("fade-out");
+
+  setTimeout(() => {
+    // Ocultar paso 2
+    paso2.style.display = "none";
+    paso2.classList.remove("fade-out");
+
+    // Mostrar paso 1
+    paso1.style.display = "block";
+    paso1.classList.add("fade-in");
+
+    // Mostrar subcategorías nuevamente
+    document.getElementById("subcats").style.display = "flex";
+
+    // Marcar visualmente los pasos
+    document.getElementById("step2btn").classList.remove("active");
+    document.getElementById("step1btn").classList.add("active");
+
+    // Scroll suave arriba
+    window.scrollTo({ top: 0, behavior: "smooth" });
+
+  }, 350);
+});
 
 </script>
 
