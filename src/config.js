@@ -21,7 +21,7 @@ export const config = {
 
   // WhatsApp Cloud API
   whatsappPhoneId: "897550086768330",
-  whatsappToken: "EAAUyO75ogaQBPyWYJSx05IlHn3sEJJgGLvi33qgwmK9RyREb8uCFWOm5jElZAn3ttCBcvtZCZBadjc49WzAPUw2zyO3n0CAGxyurrqTrsKvFqBODR4Lw6ubUWJUIZCNPDTqIxFqr3TkaI5t60Nc7xY8a4fUuMIwZBSaJAEBEh0Gx7FxUfgGcar1J8YtJ8g2XjJLhLNW9jijyhT7ILYucmCVJ8krFAvwvaPJiQ7M4XqFJtUBH3cYwe4ZByniUVQyJNMhcrqKFZAqLy8gJlOSvmZAzBqIMXzQC2mxxvDzpPQZDZD",
+  whatsappToken: "EAAUyO75ogaQBP4RP4GK9obsr7nYrra21LV26fUsk9QF412t7LZBNZCm0y0HjsLqtfnyFMy2BYLpR4csh00Cwk23VL1UAevRuebkXJ9JWtzWZCK2psOhVi2MZCUE9gHz3oqLegrRUvtFGdrZBiDm0UO0T6JQjfIZApsWncAuLlIba1SZAqvTTOIGCgnZAxbn68ZAHu82uv6wWuqxos67YqXLHF91mnTKOuN2DLLKSmReUKcb6h26UFrcRDpZB7wSVzmiqXTONE5sZA7boUoaFsPtsB0lBPrfy0BKNlYeVQ5oUQZDZD",
 
   // Twilio (no usado si whatsapp.provider = meta)
   twilio: {
