@@ -66,6 +66,28 @@ header .brand{
   .mobile-only { display: block; }
 }
 
+#hero button{
+  padding:8px 20px;
+  border-radius:999px;
+  border:1px solid #ddd;
+  background:#f8f8f8;
+  color:#252525;
+  cursor:pointer;
+  font-size:13px;
+  white-space:nowrap;
+  transition:0.4s;
+  position:relative;
+  z-index:2; /* queda arriba del flyer */
+}
+
+#hero button:hover{
+  background:black;
+  color:white;
+  border-color:black;
+}
+
+
+
 
 /* CATEGORÍAS */
 #categorias{
@@ -152,7 +174,7 @@ setTimeout(() => {
 
 
 
-<header><div class="brand">Concesionario</div></header>
+<header><div class="brand">Motocenter</div></header>
 
 <!-- HERO con flyers diferenciados -->
 <section id="hero">
