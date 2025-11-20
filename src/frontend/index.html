@@ -117,6 +117,8 @@ header .brand{
 </style>
 </head>
 
+
+<!--
 <script>
 // Ocultar intro a los 3 segundos sí o sí
 setTimeout(() => {
@@ -125,28 +127,30 @@ setTimeout(() => {
 
   // quitarlo del DOM después del fade
   setTimeout(() => intro.remove(), 700);
-}, 5000);
+}, 5100);
 </script>
-
-
+-->
 
 <body>
 
-<!-- INTRO VIDEO -->
-<!-- Intro -->
+
+<!--
 <div id="intro-container">
   <video id="intro-video" autoplay muted playsinline>
     <source src="intro.mp4" type="video/mp4" />
   </video>
 </div>
+-->
 
 
 
 <header><div class="brand">Concesionario</div></header>
 
+<!-- HERO con flyers diferenciados -->
 <section id="hero">
-  <h1>Elegí tu moto ideal</h1>
-  <p>Seleccioná una marca para continuar</p>
+  <img src="./categorias/flyer_pc.jpg" id="flyer-pc" class="hero-flyer pc-only">
+  <img src="./categorias/flyer_mobile.jpg" id="flyer-mobile" class="hero-flyer mobile-only">
+
   <button onclick="document.getElementById('categorias').scrollIntoView({behavior:'smooth'})">
     Ver categorías
   </button>
