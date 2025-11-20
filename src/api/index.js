@@ -35,15 +35,14 @@ app.get('/', (_req, res) => {
 // healthcheck
 app.get('/health', (_req, res) => res.json({ ok: true }));
 
-// schema de validación
 const schema = z.object({
   nombre: z.string().min(2),
   telefono: z.string().min(6),
   dni: z.string().min(6),
   vehiculo: z.string().min(1),
-  precio: z.number().positive(),
   consentimiento: z.boolean()
 });
+
 
 // endpoint principal
 app.post('/api/solicitar-financiacion', async (req, res) => {
