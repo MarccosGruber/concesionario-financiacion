@@ -33,3 +33,5 @@ export const config = {
   mpLink: required('MP_LINK'),
   encryptionKey: required('ENCRYPTION_KEY'),
 };
+
+{}
