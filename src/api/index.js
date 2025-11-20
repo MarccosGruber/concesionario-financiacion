@@ -21,6 +21,12 @@ const __dirname = path.dirname(__filename);
 const FRONTEND_PATH = path.join(__dirname, '..', 'frontend');
 app.use(express.static(FRONTEND_PATH));
 
+// Servir carpeta frontend completa
+app.use(express.static(path.join(__dirname, '..', 'frontend')));
+
+// Servir explícitamente la carpeta de categorías
+app.use('/categorias', express.static(path.join(__dirname, '..', 'frontend', 'categorias')));
+
 // 📌 Ruta raíz → cargar index.html
 app.get('/', (_req, res) => {
   res.sendFile(path.join(FRONTEND_PATH, 'index.html'));
