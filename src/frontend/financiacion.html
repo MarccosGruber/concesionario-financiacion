@@ -51,37 +51,61 @@ h1{text-align:center;font-size:30px;margin-bottom:6px;}
 .chip.active{background:#111;color:#fff;border-color:#111;}
 
 /* Grid motos */
-.grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
-  gap:24px;
-  margin-top:10px;
+/* GRID DE MOTOS — 3 por fila en PC, 1 en móvil */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 26px;
+  justify-items: center;
 }
 
-.card{
-  border:1px solid #eee;
-  border-radius:16px;
-  overflow:hidden;
-  cursor:pointer;
-  width:100%;
-  max-width:380px;
-  margin:0 auto;
-  background:#fff;
+/* TARJETA DE MOTO */
+.card {
+  width: 100%;
+  max-width: 580px;   /* EXACTO para tus imágenes */
+  border: 1px solid #eee;
+  border-radius: 16px;
+  overflow: hidden;
+  cursor: pointer;
+  background: #fff;
+  transition: 0.25s;
 }
 
-.card img{
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+}
+
+/* IMAGEN */
+.card img {
   width: 100%;
   height: 300px;
   object-fit: contain;
-  background:#fff;
-  padding: 10px;
-  display:block;
+  background: white;     /* asegura fondo limpio */
+  padding: 10px;         /* evita que toque los bordes */
+  display: block;
 }
 
-.card h3{
-  text-align:center;
-  font-size:17px;
-  padding:10px;
+
+/* TEXTO */
+.card h3 {
+  margin: 30px;
+  font-size: 18px;
+  text-align: center;
+}
+
+@media (max-width: 768px) {
+  .grid {
+    grid-template-columns: 1fr; /* SOLO UNA POR FILA EN CELULAR */
+  }
+
+  .card {
+    max-width: 100%;
+  }
+
+  .card img {
+    height: 260px;  /* más proporcional en pantalla pequeña */
+  }
 }
 
 /* Formulario */
@@ -266,43 +290,42 @@ const catalogo=[
 // HONDA
 
   // 110cc
-  { nombre: "Honda Wave 110", categoria: "Honda", sub: ["110"], precio: 0, img: "honda_wave_110.jpg" },
-  { nombre: "Honda Navi 110", categoria: "Honda", sub: ["110", "SCOOTERS"], precio: 0, img: "Honda Navi 110.jpg" },
+  { nombre: "Honda Wave 110", categoria: "Honda", sub: ["110"], precio: 0, img: "./Motos/Honda Wave 110.jpg" },
+  { nombre: "Honda Navi 110", categoria: "Honda", sub: ["110", "SCOOTERS"], precio: 0, img: "./Motos/Honda Navi 110.jpg" },
 
   // 125cc
-  { nombre: "Honda Biz 125", categoria: "Honda", sub: ["125", "SCOOTERS"], precio: 0, img: "Honda Biz 125" },
+  { nombre: "Honda Biz 125", categoria: "Honda", sub: ["125", "SCOOTERS"], precio: 0, img: "./Motos/Honda Biz 125.jpg" },
 
   // 150cc
-  { nombre: "Honda CG Titan 150", categoria: "Honda", sub: ["150"], precio: 0, img: "Honda CG Titan 150.jpg" },
-  { nombre: "Honda CG Fan 150", categoria: "Honda", sub: ["150"], precio: 0, img: "Honda CG Fan 150" },
+  { nombre: "Honda CG Titan 150", categoria: "Honda", sub: ["150"], precio: 0, img: "./Motos/Honda CG Titan 150.jpg" },
 
   // On/off — 150 / 160 / 190
-  { nombre: "Honda XR 150L", categoria: "Honda", sub: ["150"], precio: 0, img: "Honda XR 150L" },
-  { nombre: "Honda XR 160 Tornado", categoria: "Honda", sub: ["160"], precio: 0, img: "Honda XR 160 Tornado" },
-  { nombre: "Honda XR 190L", categoria: "Honda", sub: ["190"], precio: 0, img: "Honda XR 190L" },
+  { nombre: "Honda XR 150L", categoria: "Honda", sub: ["150"], precio: 0, img: "./Motos/Honda XR 150L.jpg" },
+  { nombre: "Honda XR 160 Tornado", categoria: "Honda", sub: ["160"], precio: 0, img: "./Motos/Honda XR 160 Tornado.jpg" },
+  { nombre: "Honda XR 190L", categoria: "Honda", sub: ["190"], precio: 0, img: "./Motos/Honda XR 190L.jpg" },
 
   // Naked 160
-  { nombre: "Honda CB160F", categoria: "Honda", sub: ["160"], precio: 0, img: "Honda CB160F" },
+  { nombre: "Honda CB160F", categoria: "Honda", sub: ["160"], precio: 0, img: "./Motos/Honda CB160F.jpg" },
 
   // 250
-  { nombre: "Honda XR 250 Tornado", categoria: "Honda", sub: ["250"], precio: 0, img: "Honda XR 250 Tornado" },
-  { nombre: "Honda CB250 Twister", categoria: "Honda", sub: ["250"], precio: 0, img: "Honda CB250 Twister" },
+  { nombre: "Honda XR 250 Tornado", categoria: "Honda", sub: ["250"], precio: 0, img: "./Motos/Honda XR 250 Tornado.jpg" },
+  { nombre: "Honda CB250 Twister", categoria: "Honda", sub: ["250"], precio: 0, img: "./Motos/Honda CB250 Twister.jpg" },
 
   // Scooters
-  { nombre: "Honda PCX 160", categoria: "Honda", sub: ["SCOOTERS", "160"], precio: 0, img: "Honda PCX 160" },
-  { nombre: "Honda Elite 125", categoria: "Honda", sub: ["SCOOTERS", "125"], precio: 0, img: "Honda Elite 125" },
+  { nombre: "Honda PCX 160", categoria: "Honda", sub: ["SCOOTERS", "160"], precio: 0, img: "./Motos/Honda PCX 160.jpg" },
+  { nombre: "Honda Elite 125", categoria: "Honda", sub: ["SCOOTERS", "125"], precio: 0, img: "./Motos/Honda Elite 125.jpg" },
 
   // 300
-  { nombre: "Honda CB300F Twister", categoria: "Honda", sub: ["300"], precio: 0, img: "Honda CB300F Twister" },
-  { nombre: "Honda CBR300R", categoria: "Honda", sub: ["300"], precio: 0, img: "Honda CBR300R" },
+  { nombre: "Honda CB300F Twister", categoria: "Honda", sub: ["300"], precio: 0, img: "./Motos/Honda CB300F Twister.jpg" },
+  { nombre: "Honda CBR300R", categoria: "Honda", sub: ["300"], precio: 0, img: "./Motos/Honda CBR300R.jpg" },
 
   // Adventure 300
-  { nombre: "Honda XRE 300", categoria: "Honda", sub: ["300"], precio: 0, img: "Honda XRE 300" },
+  { nombre: "Honda XRE 300", categoria: "Honda", sub: ["300"], precio: 0, img: "./Motos/Honda XRE 300.jpg" },
 
   // Alta gama (opcional)
-  { nombre: "Honda CB500X", categoria: "Honda", sub: ["500"], precio: 0, img: "Honda CB500X" },
-  { nombre: "Honda NC750X", categoria: "Honda", sub: ["750"], precio: 0, img: "Honda NC750X" },
-  { nombre: "Honda Africa Twin 1100", categoria: "Honda", sub: ["1100"], precio: 0, img: "Honda Africa Twin 1100" },
+  { nombre: "Honda CB500X", categoria: "Honda", sub: ["500"], precio: 0, img: "./Motos/Honda CB500X.jpg" },
+  { nombre: "Honda NC750X", categoria: "Honda", sub: ["750"], precio: 0, img: "./Motos/Honda NC750X.jpg" },
+  { nombre: "Honda Africa Twin 1100", categoria: "Honda", sub: ["1100"], precio: 0, img: "./Motos/Honda Africa Twin 1100.jpg" },
 ];
 
 // SUBCATEGORÍAS
