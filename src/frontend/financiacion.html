@@ -378,30 +378,48 @@ function renderSubcats(){
 }
 
 // ---------- LISTADO DE MOTOS (con buscador + filtro) ----------
-function renderMotos(){
+function renderMotos() {
   const texto = buscador.value.toLowerCase().trim();
 
+  // 1 — BASE: filtrar solo por marca
   let lista = catalogo.filter(m => m.categoria === marca);
 
-  // 🟢 Opción A — si hay texto, prioriza búsqueda y NO aplica subcategoría
-  if (texto) {
+  // 2 — LÓGICA INTELIGENTE
+  if (buscadorPrimero && subcatSeleccionada) {
+    // 🔵 Caso 1 → se combinan
     lista = lista.filter(m =>
       m.nombre.toLowerCase().includes(texto) ||
       m.sub.some(s => s.toLowerCase().includes(texto))
+    ).filter(m => m.sub.includes(subcatSeleccionada));
+
+  } else if (subcatPrimero && texto.length > 0) {
+    // 🔴 Caso 2 → NO combinar
+    lista = catalogo.filter(m => m.categoria === marca)
+                    .filter(m =>
+      m.nombre.toLowerCase().includes(texto) ||
+      m.sub.some(s => s.toLowerCase().includes(texto))
     );
-  } else if (subcatSeleccionada) {
-    // Si NO hay texto, recién ahí aplica la subcategoría
-    lista = lista.filter(m => m.sub.includes(subcatSeleccionada));
+
+  } else {
+    // 🔘 Caso normal: sin combinaciones especiales
+    if (subcatSeleccionada) {
+      lista = lista.filter(m => m.sub.includes(subcatSeleccionada));
+    }
+    if (texto.length > 0) {
+      lista = lista.filter(m =>
+        m.nombre.toLowerCase().includes(texto) ||
+        m.sub.some(s => s.toLowerCase().includes(texto))
+      );
+    }
   }
 
-  const grid = document.getElementById("vehiculos-grid");
-
-  grid.innerHTML =
+  // 3 — Render final
+  document.getElementById("vehiculos-grid").innerHTML =
     lista.length === 0
       ? `<p style="text-align:center;color:#888;">No se encontraron modelos</p>`
-      : lista.map(m=>`
+      : lista.map(m => `
           <div class='card' onclick="seleccionarMoto('${m.nombre}')">
-            <img src='${m.img}' alt="${m.nombre}">
+            <img src='${m.img}'>
             <h3>${m.nombre}</h3>
           </div>
         `).join('');
@@ -433,8 +451,10 @@ function seleccionarMoto(nombre){
 
   }, 350);
 
-  // Ocultar subcategorías
+  // Ocultar subcategorías y buscador
   subcatsContainer.style.display = "none";
+  document.getElementById("buscador").style.display = "none";
+
 
   // Completar datos ocultos
   document.getElementById("vehiculo").value = m.nombre;
@@ -546,8 +566,10 @@ document.getElementById("step1btn").addEventListener("click", () => {
     paso1.style.display = "block";
     paso1.classList.add("fade-in");
 
-    // Mostrar subcategorías nuevamente
+    // Mostrar subcategorías y buscador nuevamente
     subcatsContainer.style.display = "flex";
+    document.getElementById("buscador").style.display = "block";
+
 
     // Marcar visualmente los pasos
     document.getElementById("step2btn").classList.remove("active");
