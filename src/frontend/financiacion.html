@@ -591,6 +591,23 @@ document.getElementById("step1btn").addEventListener("click", () => {
 
   }, 350);
 });
+
+// ---------- AUTO-GUARDADO LOCAL ----------
+const campos = ["nombre", "telefono", "dni"];
+
+campos.forEach(id => {
+  const input = document.getElementById(id);
+
+  // Cargar valor guardado al entrar
+  const guardado = localStorage.getItem("form_"+id);
+  if (guardado) input.value = guardado;
+
+  // Guardar cada vez que escribe
+  input.addEventListener("input", () => {
+    localStorage.setItem("form_"+id, input.value.trim());
+  });
+});
+
 </script>
 
 </body>
