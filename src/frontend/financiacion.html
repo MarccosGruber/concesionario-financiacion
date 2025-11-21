@@ -86,7 +86,6 @@ h1{text-align:center;font-size:30px;margin-bottom:6px;}
   display: block;
 }
 
-
 /* TEXTO */
 .card h3 {
   margin: 30px;
@@ -210,11 +209,9 @@ button{
     transform: translateY(-15px);
   }
 }
-
 </style>
 </head>
 <body>
-
 
 <header><div class="brand">Solicitar financiación</div></header>
 
@@ -228,8 +225,27 @@ button{
     <div id="step2btn" class="step">2 — Datos personales</div>
   </div>
 
+  <!-- Buscador -->
+  <input 
+    id="buscador"
+    type="text"
+    placeholder="Buscar modelo..."
+    style="
+      width:100%;
+      max-width:420px;
+      padding:10px 14px;
+      margin:0 auto 20px auto;
+      display:block;
+      border-radius:999px;
+      border:1px solid #ddd;
+      font-size:15px;
+      outline:none;
+    ">
+
+  <!-- Chips subcategorías -->
   <div class="filters" id="subcats"></div>
 
+  <!-- Paso 1 -->
   <div id="paso1">
     <div class="grid" id="vehiculos-grid"></div>
   </div>
@@ -272,22 +288,23 @@ button{
 </div>
 
 <script>
-
 // REFERENCIAS
 const paso1 = document.getElementById("paso1");
 const paso2 = document.getElementById("paso2");
 const formBox = document.getElementById("formBox");
+const buscador = document.getElementById("buscador");
+const subcatsContainer = document.getElementById("subcats");
 
+let subcatSeleccionada = null;
 
-
-// GET categoría
+// GET categoría desde la URL
 const urlParams = new URLSearchParams(window.location.search);
 const marca = urlParams.get("cat");
 
 // BASE DE DATOS
 const catalogo=[
 
-// HONDA
+  // HONDA
 
   // 110cc
   { nombre: "Honda Wave 110", categoria: "Honda", sub: ["110"], precio: 0, img: "./Motos/Honda Wave 110.jpg" },
@@ -322,53 +339,78 @@ const catalogo=[
   // Adventure 300
   { nombre: "Honda XRE 300", categoria: "Honda", sub: ["300"], precio: 0, img: "./Motos/Honda XRE 300.jpg" },
 
-  // Alta gama (opcional)
+  // Alta gama
   { nombre: "Honda CB500X", categoria: "Honda", sub: ["500"], precio: 0, img: "./Motos/Honda CB500X.jpg" },
   { nombre: "Honda NC750X", categoria: "Honda", sub: ["750"], precio: 0, img: "./Motos/Honda NC750X.jpg" },
   { nombre: "Honda Africa Twin 1100", categoria: "Honda", sub: ["1100"], precio: 0, img: "./Motos/Honda Africa Twin 1100.jpg" },
 ];
 
-// SUBCATEGORÍAS
-
-  function renderSubcats(){
-    const subcats = [
+// ---------- SUBCATEGORÍAS ----------
+function renderSubcats(){
+  const subcats = [
     ...new Set(
       catalogo
         .filter(m => m.categoria === marca)
-        .flatMap(m => m.sub)   // aplana múltiples subcategorías
+        .flatMap(m => m.sub)
     )
   ];
 
-  const box=document.getElementById("subcats");
+  const chipsHtml = subcats.map(s => {
+    const label = (s.toUpperCase() === "SCOOTER" || s.toUpperCase() === "SCOOTERS") ? "SCOOTERS" : s;
+    return `<button class="chip" data-sub="${s}">${label}</button>`;
+  }).join('');
 
-  box.innerHTML =
-    `<button class='chip active' onclick="renderMotos()">Todas</button>` +
-subcats.map(s=>{
-  const label = (s.toLowerCase() === "scooter") ? "SCOOTERS" : s;
-  return `<button class='chip' onclick="renderMotos('${s}')">${label}</button>`;
-}).join('');
+  subcatsContainer.innerHTML =
+    `<button class="chip active" data-sub="">Todas</button>` + chipsHtml;
 
+  const chips = subcatsContainer.querySelectorAll(".chip");
+  chips.forEach(chip => {
+    chip.addEventListener("click", () => {
+      chips.forEach(c => c.classList.remove("active"));
+      chip.classList.add("active");
+
+      const value = chip.getAttribute("data-sub");
+      subcatSeleccionada = value ? value : null;
+
+      renderMotos();
+    });
+  });
 }
 
-// MOSTRAR MOTOS (sin precio)
-function renderMotos(sub=null){
-  const lista = catalogo.filter(m =>
-  m.categoria === marca &&
-  (!sub || m.sub.includes(sub))
-);
+// ---------- LISTADO DE MOTOS (con buscador + filtro) ----------
+function renderMotos(){
+  const texto = buscador.value.toLowerCase().trim();
 
+  let lista = catalogo.filter(m => m.categoria === marca);
 
-  document.getElementById("vehiculos-grid").innerHTML =
-    lista.map(m=>`
-      <div class='card' onclick="seleccionarMoto('${m.nombre}')">
-        <img src='${m.img}'>
-        <h3>${m.nombre}</h3>
-      </div>
-    `).join('');
+  // 🟢 Opción A — si hay texto, prioriza búsqueda y NO aplica subcategoría
+  if (texto) {
+    lista = lista.filter(m =>
+      m.nombre.toLowerCase().includes(texto) ||
+      m.sub.some(s => s.toLowerCase().includes(texto))
+    );
+  } else if (subcatSeleccionada) {
+    // Si NO hay texto, recién ahí aplica la subcategoría
+    lista = lista.filter(m => m.sub.includes(subcatSeleccionada));
+  }
+
+  const grid = document.getElementById("vehiculos-grid");
+
+  grid.innerHTML =
+    lista.length === 0
+      ? `<p style="text-align:center;color:#888;">No se encontraron modelos</p>`
+      : lista.map(m=>`
+          <div class='card' onclick="seleccionarMoto('${m.nombre}')">
+            <img src='${m.img}' alt="${m.nombre}">
+            <h3>${m.nombre}</h3>
+          </div>
+        `).join('');
 }
 
+// ---------- PASO 2 ----------
 function seleccionarMoto(nombre){
   const m = catalogo.find(x=>x.nombre===nombre);
+  if (!m) return;
 
   // Animación suave al ocultar paso 1
   paso1.classList.add("fade-out");
@@ -377,22 +419,22 @@ function seleccionarMoto(nombre){
     paso1.style.display = "none";
     paso1.classList.remove("fade-out");
 
-    // Mostrar paso 2 con animación suave
+    // Mostrar paso 2 con animación
     paso2.style.display = "block";
     formBox.style.display = "block";
     paso2.classList.add("fade-in");
 
-    // Marcar/desmarcar pasos
+    // Actualizar pasos
     document.getElementById("step1btn").classList.remove("active");
     document.getElementById("step2btn").classList.add("active");
 
-    // Scroll suave arriba
+    // Scroll arriba
     window.scrollTo({ top: 0, behavior: "smooth" });
 
   }, 350);
 
   // Ocultar subcategorías
-  document.getElementById("subcats").style.display = "none";
+  subcatsContainer.style.display = "none";
 
   // Completar datos ocultos
   document.getElementById("vehiculo").value = m.nombre;
@@ -400,35 +442,34 @@ function seleccionarMoto(nombre){
 
   // Resumen
   document.getElementById("motoResumen").innerHTML = `
-    <img src="${m.img}">
+    <img src="${m.img}" alt="${m.nombre}">
     <div><strong>${m.nombre}</strong></div>
   `;
 }
 
-
-// ENVIAR FORMULARIO
+// ---------- ENVIAR FORMULARIO ----------
 document.getElementById("form").addEventListener("submit", async (e) => {
   e.preventDefault();
 
-const rawTel = document.getElementById("telefono").value.trim();
+  const rawTel = document.getElementById("telefono").value.trim();
 
-// Elimina +, espacios y todo lo que no sea número
-const telefonoLimpio = rawTel.replace(/\D/g, "");
+  // Elimina todo lo que no sea número
+  const telefonoLimpio = rawTel.replace(/\D/g, "");
 
-// Asegura que empiece con 54
-let telefonoFinal = telefonoLimpio;
-if (!telefonoFinal.startsWith("54")) {
-  telefonoFinal = "54" + telefonoFinal;
-}
+  // Asegura que empiece con 54
+  let telefonoFinal = telefonoLimpio;
+  if (!telefonoFinal.startsWith("54")) {
+    telefonoFinal = "54" + telefonoFinal;
+  }
 
-const data = {
-  nombre: document.getElementById("nombre").value.trim(),
-  telefono: telefonoFinal,
-  dni: document.getElementById("dni").value.trim(),
-  vehiculo: document.getElementById("vehiculo").value,
-  precio: Number(document.getElementById("precio").value),
-  consentimiento: document.getElementById("consentimiento").checked
-};
+  const data = {
+    nombre: document.getElementById("nombre").value.trim(),
+    telefono: telefonoFinal,
+    dni: document.getElementById("dni").value.trim(),
+    vehiculo: document.getElementById("vehiculo").value,
+    precio: Number(document.getElementById("precio").value),
+    consentimiento: document.getElementById("consentimiento").checked
+  };
 
   const okEl = document.getElementById("ok");
   const errEl = document.getElementById("err");
@@ -455,9 +496,12 @@ const data = {
   }
 });
 
-// INICIALIZAR
+// ---------- INICIALIZAR ----------
 renderSubcats();
 renderMotos();
+
+// Buscador: re-render en cada input
+buscador.addEventListener("input", renderMotos);
 
 // 👉 Campo teléfono con +54 obligatorio
 const telInput = document.getElementById("telefono");
@@ -474,7 +518,6 @@ telInput.addEventListener("input", () => {
   if (!telInput.value.startsWith("+54")) {
     telInput.value = "+54 ";
   }
-
   // Quitar letras, dejar solo números después de +54
   telInput.value = "+54 " + telInput.value.replace("+54", "").replace(/\D/g, "");
 });
@@ -486,9 +529,8 @@ telInput.addEventListener("keydown", (e) => {
   }
 });
 
-// 👉 Permitir volver al Paso 1 desde el botón "1 — Elegir moto"
+// 👉 Volver al Paso 1 desde el botón "1 — Elegir moto"
 document.getElementById("step1btn").addEventListener("click", () => {
-
   // Si ya estamos en paso 1, no hacer nada
   if (paso1.style.display !== "none") return;
 
@@ -505,7 +547,7 @@ document.getElementById("step1btn").addEventListener("click", () => {
     paso1.classList.add("fade-in");
 
     // Mostrar subcategorías nuevamente
-    document.getElementById("subcats").style.display = "flex";
+    subcatsContainer.style.display = "flex";
 
     // Marcar visualmente los pasos
     document.getElementById("step2btn").classList.remove("active");
@@ -516,7 +558,6 @@ document.getElementById("step1btn").addEventListener("click", () => {
 
   }, 350);
 });
-
 </script>
 
 </body>

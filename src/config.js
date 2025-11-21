@@ -23,15 +23,7 @@ export const config = {
   whatsappPhoneId: "897550086768330",
   whatsappToken: "EAAUyO75ogaQBQKfFd0S83equdam1QTQIR7hR8WEkbgR7NQ9E08HOERGs176e79RL71jzwvdZALYQldrhiaNjdjAARs71Sm5YCQEZAlVI8x10jTZAD2SGek8zZCQ8KAHsPah7WBoiJpGHeFIg5Nmy72fizMJkaBGaztYqQ5D3poXrZBuFRsUnRx6Ip1ZArrKPodz9vOseDs1lNECrajaMZBafoRFjZCfOe97vnXdjh0mKl2SLRGjAsCWgGZAqdzjLd99yHZCZASM0kXnMpvaZC6jXypa9ZAPaTv4WVtKZAMM4IgJG8ZD",
 
-  // Twilio (no usado si whatsapp.provider = meta)
-  twilio: {
-    sid: process.env.TWILIO_ACCOUNT_SID,
-    token: process.env.TWILIO_AUTH_TOKEN,
-    from: process.env.TWILIO_WHATSAPP_FROM,
-  },
 
-  mpLink: required('MP_LINK'),
-  encryptionKey: required('ENCRYPTION_KEY'),
 };
 
 {}
