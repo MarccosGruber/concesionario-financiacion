@@ -375,9 +375,6 @@ function renderSubcats(){
     const value = chip.getAttribute("data-sub");
     subcatSeleccionada = value ? value : null;
 
-    subcatPrimero = true;
-    buscadorPrimero = false;
-
     renderMotos();
   });
 });
@@ -387,39 +384,24 @@ function renderSubcats(){
 function renderMotos() {
   const texto = buscador.value.toLowerCase().trim();
 
-  // 1 — BASE: filtrar solo por marca
   let lista = catalogo.filter(m => m.categoria === marca);
 
-  // 2 — LÓGICA INTELIGENTE
-  if (buscadorPrimero && subcatSeleccionada) {
-    // 🔵 Caso 1 → se combinan
+  // FILTRO POR SUBCATEGORÍA SI HAY UNA SELECCIONADA
+  if (subcatSeleccionada) {
+    lista = lista.filter(m =>
+      m.sub.map(s => s.toLowerCase()).includes(subcatSeleccionada.toLowerCase())
+    );
+  }
+
+  // FILTRO POR BUSCADOR
+  if (texto.length > 0) {
     lista = lista.filter(m =>
       m.nombre.toLowerCase().includes(texto) ||
       m.sub.some(s => s.toLowerCase().includes(texto))
-    ).filter(m => m.sub.includes(subcatSeleccionada));
-
-  } else if (subcatPrimero && texto.length > 0) {
-    // 🔴 Caso 2 → NO combinar
-    lista = catalogo.filter(m => m.categoria === marca)
-                    .filter(m =>
-      m.nombre.toLowerCase().includes(texto) ||
-      m.sub.some(s => s.toLowerCase().includes(texto))
     );
-
-  } else {
-    // 🔘 Caso normal: sin combinaciones especiales
-    if (subcatSeleccionada) {
-      lista = lista.filter(m => m.sub.includes(subcatSeleccionada));
-    }
-    if (texto.length > 0) {
-      lista = lista.filter(m =>
-        m.nombre.toLowerCase().includes(texto) ||
-        m.sub.some(s => s.toLowerCase().includes(texto))
-      );
-    }
   }
 
-  // 3 — Render final
+  // RENDER FINAL
   document.getElementById("vehiculos-grid").innerHTML =
     lista.length === 0
       ? `<p style="text-align:center;color:#888;">No se encontraron modelos</p>`
@@ -430,6 +412,7 @@ function renderMotos() {
           </div>
         `).join('');
 }
+
 
 // ---------- PASO 2 ----------
 function seleccionarMoto(nombre){
@@ -527,11 +510,8 @@ renderSubcats();
 renderMotos();
 
 // Buscador: re-render en cada input
-buscador.addEventListener("input", () => {
-  buscadorPrimero = true;
-  subcatPrimero = false;
-  renderMotos();
-});
+buscador.addEventListener("input", renderMotos);
+
 
 
 // 👉 Campo teléfono con +54 obligatorio
