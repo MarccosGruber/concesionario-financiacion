@@ -296,6 +296,9 @@ const buscador = document.getElementById("buscador");
 const subcatsContainer = document.getElementById("subcats");
 
 let subcatSeleccionada = null;
+let buscadorPrimero = false;
+let subcatPrimero = false;
+
 
 // GET categoría desde la URL
 const urlParams = new URLSearchParams(window.location.search);
@@ -365,16 +368,19 @@ function renderSubcats(){
 
   const chips = subcatsContainer.querySelectorAll(".chip");
   chips.forEach(chip => {
-    chip.addEventListener("click", () => {
-      chips.forEach(c => c.classList.remove("active"));
-      chip.classList.add("active");
+  chip.addEventListener("click", () => {
+    chips.forEach(c => c.classList.remove("active"));
+    chip.classList.add("active");
 
-      const value = chip.getAttribute("data-sub");
-      subcatSeleccionada = value ? value : null;
+    const value = chip.getAttribute("data-sub");
+    subcatSeleccionada = value ? value : null;
 
-      renderMotos();
-    });
+    subcatPrimero = true;
+    buscadorPrimero = false;
+
+    renderMotos();
   });
+});
 }
 
 // ---------- LISTADO DE MOTOS (con buscador + filtro) ----------
@@ -521,7 +527,12 @@ renderSubcats();
 renderMotos();
 
 // Buscador: re-render en cada input
-buscador.addEventListener("input", renderMotos);
+buscador.addEventListener("input", () => {
+  buscadorPrimero = true;
+  subcatPrimero = false;
+  renderMotos();
+});
+
 
 // 👉 Campo teléfono con +54 obligatorio
 const telInput = document.getElementById("telefono");
@@ -566,7 +577,7 @@ document.getElementById("step1btn").addEventListener("click", () => {
     paso1.style.display = "block";
     paso1.classList.add("fade-in");
 
-    // Mostrar subcategorías y buscador nuevamente
+    // Mostrar subcategorías y buscador nuevamente (al volver al paso 1)
     subcatsContainer.style.display = "flex";
     document.getElementById("buscador").style.display = "block";
 
