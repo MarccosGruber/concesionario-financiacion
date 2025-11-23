@@ -1,8 +1,8 @@
 import { config } from "../config.js";
 
 // TEMPLATE:
-// 1 = nombre
-// 2 = moto
+// 1 = Nombre
+// 2 = Vehiculo
 
 export async function sendWhatsAppMeta(telefono, nombre, vehiculo) {
     try {
@@ -27,8 +27,18 @@ export async function sendWhatsAppMeta(telefono, nombre, vehiculo) {
             }
         };
 
-        
+        // 🔹 MODO PRUEBA — NO ENVÍA MENSAJE
+        if (config.whatsapp.dryRun) {
+            console.log("DRY RUN – mensaje NO enviado:", {
+                telefono,
+                nombre,
+                vehiculo,
+                body
+            });
+            return { ok: true, dryRun: true };
+        }
 
+        // 🔹 ENVÍO REAL
         const res = await fetch(url, {
             method: "POST",
             headers: {
@@ -53,3 +63,4 @@ export async function sendWhatsAppMeta(telefono, nombre, vehiculo) {
         throw error;
     }
 }
+

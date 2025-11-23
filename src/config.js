@@ -8,6 +8,8 @@ const required = (key, optional = false) => {
   return value;
 };
 
+// config.js
+
 export const config = {
   env: process.env.NODE_ENV || 'development',
   port: parseInt(process.env.PORT || '3000', 10),
@@ -19,11 +21,9 @@ export const config = {
     dryRun: String(process.env.WHATSAPP_DRY_RUN || 'false').toLowerCase() === 'true',
   },
 
-  // WhatsApp Cloud API
-  whatsappPhoneId: "897550086768330",
-  whatsappToken: "EAAUyO75ogaQBQKfFd0S83equdam1QTQIR7hR8WEkbgR7NQ9E08HOERGs176e79RL71jzwvdZALYQldrhiaNjdjAARs71Sm5YCQEZAlVI8x10jTZAD2SGek8zZCQ8KAHsPah7WBoiJpGHeFIg5Nmy72fizMJkaBGaztYqQ5D3poXrZBuFRsUnRx6Ip1ZArrKPodz9vOseDs1lNECrajaMZBafoRFjZCfOe97vnXdjh0mKl2SLRGjAsCWgGZAqdzjLd99yHZCZASM0kXnMpvaZC6jXypa9ZAPaTv4WVtKZAMM4IgJG8ZD",
+  // WhatsApp Cloud API (⚠️ AHORA NO HARD-CODEADO)
+  whatsappPhoneId: required('WHATSAPP_PHONE_ID'),
+  whatsappToken: required('WHATSAPP_TOKEN'),
 
-
+  encryptionKey: required('ENCRYPTION_KEY'),
 };
-
-{}
