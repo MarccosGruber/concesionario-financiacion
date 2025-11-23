@@ -8,6 +8,8 @@ import { sendWhatsAppMeta } from '../integrations/whatsappMeta.js';
 import { getMpLink } from '../integrations/mercadoPago.js';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { SolicitudSchema } from "../schemas/solicitud.schema.js";
+
 
 const app = express();
 app.use(cors());
@@ -35,18 +37,9 @@ app.get('/', (_req, res) => {
 // healthcheck
 app.get('/health', (_req, res) => res.json({ ok: true }));
 
-const schema = z.object({
-  nombre: z.string().min(2),
-  telefono: z.string().min(6),
-  dni: z.string().min(6),
-  vehiculo: z.string().min(1),
-  consentimiento: z.boolean()
-});
-
-
 // endpoint principal
 app.post('/api/solicitar-financiacion', async (req, res) => {
-  const parsed = schema.safeParse(req.body);
+const parsed = SolicitudSchema.safeParse(req.body);
   if (!parsed.success) {
     return res.status(400).json({
       error: 'Datos inválidos',
