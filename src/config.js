@@ -8,8 +8,6 @@ const required = (key, optional = false) => {
   return value;
 };
 
-// config.js
-
 export const config = {
   env: process.env.NODE_ENV || 'development',
   port: parseInt(process.env.PORT || '3000', 10),
@@ -21,9 +19,17 @@ export const config = {
     dryRun: String(process.env.WHATSAPP_DRY_RUN || 'false').toLowerCase() === 'true',
   },
 
-  // WhatsApp Cloud API (⚠️ AHORA NO HARD-CODEADO)
+  // WhatsApp Cloud API
   whatsappPhoneId: required('WHATSAPP_PHONE_ID'),
   whatsappToken: required('WHATSAPP_TOKEN'),
 
   encryptionKey: required('ENCRYPTION_KEY'),
+
+  // 🔐 Config admin
+  admin: {
+    user: required('ADMIN_USER'),
+    password: required('ADMIN_PASSWORD'),
+    jwtSecret: required('ADMIN_JWT_SECRET'),
+  },
 };
+

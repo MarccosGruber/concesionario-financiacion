@@ -56,7 +56,12 @@ const parsed = SolicitudSchema.safeParse(req.body);
   }
 
   try {
-    const id = await saveSolicitud(data);
+    const id = await saveSolicitud({
+      ...data,
+      origen: req.query.origen || "landing",   // si querés permitir tracking
+      ip: req.headers["x-forwarded-for"] || req.ip,
+      user_agent: req.headers["user-agent"]
+    });
 
     await sendWhatsAppMeta(
       data.telefono,
