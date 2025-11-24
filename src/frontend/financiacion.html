@@ -497,7 +497,6 @@ document.getElementById("form").addEventListener("submit", async (e) => {
     if (!res.ok) throw new Error(json.error || "Error inesperado");
 
     okEl.style.display = "block";
-    e.target.reset();
 
   } catch (err) {
     errEl.textContent = "❌ " + err.message;
@@ -589,6 +588,9 @@ campos.forEach(id => {
 });
 
 </script>
+
+<script src="https://cdn.jsdelivr.net/npm/zod@3.22.4/lib/index.umd.min.js"></script>
+
 
 </body>
 </html>
