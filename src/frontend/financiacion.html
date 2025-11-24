@@ -209,6 +209,34 @@ button{
     transform: translateY(-15px);
   }
 }
+
+/* Animación suave al renderizar las motos */
+.card {
+  opacity: 0;
+  transform: translateY(10px);
+  animation: fadeUp 0.35s forwards ease;
+}
+
+@keyframes fadeUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+#vehiculos-grid.fade-out {
+  opacity: 0;
+  transform: scale(0.98);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+#vehiculos-grid.fade-in {
+  opacity: 1;
+  transform: scale(1);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+}
+
+
 </style>
 </head>
 <body>
@@ -349,35 +377,48 @@ const catalogo=[
 ];
 
 // ---------- SUBCATEGORÍAS ----------
-function renderSubcats(){
-  const subcats = [
-    ...new Set(
-      catalogo
-        .filter(m => m.categoria === marca)
-        .flatMap(m => m.sub)
-    )
-  ];
+function renderMotos() {
+  const grid = document.getElementById("vehiculos-grid");
 
-  const chipsHtml = subcats.map(s => {
-    const label = (s.toUpperCase() === "SCOOTER" || s.toUpperCase() === "SCOOTERS") ? "SCOOTERS" : s;
-    return `<button class="chip" data-sub="${s}">${label}</button>`;
-  }).join('');
+  // Fade-out
+  grid.classList.add("fade-out");
+  grid.classList.remove("fade-in");
 
-  subcatsContainer.innerHTML =
-    `<button class="chip active" data-sub="">Todas</button>` + chipsHtml;
+  setTimeout(() => {
+    const texto = buscador.value.toLowerCase().trim();
+    let lista = catalogo.filter(m => m.categoria === marca);
 
-  const chips = subcatsContainer.querySelectorAll(".chip");
-  chips.forEach(chip => {
-  chip.addEventListener("click", () => {
-    chips.forEach(c => c.classList.remove("active"));
-    chip.classList.add("active");
+    if (subcatSeleccionada) {
+      lista = lista.filter(m =>
+        m.sub.map(s => s.toLowerCase()).includes(subcatSeleccionada.toLowerCase())
+      );
+    }
 
-    const value = chip.getAttribute("data-sub");
-    subcatSeleccionada = value ? value : null;
+    if (texto.length > 0) {
+      lista = lista.filter(m =>
+        m.nombre.toLowerCase().includes(texto) ||
+        m.sub.some(s => s.toLowerCase().includes(texto))
+      );
+    }
 
-    renderMotos();
-  });
-});
+    // Render
+    grid.innerHTML =
+      lista.length === 0
+        ? `<p style="text-align:center;color:#888;">No se encontraron modelos</p>`
+        : lista.map(m => `
+            <div class='card' onclick="seleccionarMoto('${m.nombre}')">
+              <img src='${m.img}'>
+              <h3>${m.nombre}</h3>
+            </div>
+          `).join('');
+
+    // Fade-in
+    requestAnimationFrame(() => {
+      grid.classList.remove("fade-out");
+      grid.classList.add("fade-in");
+    });
+
+  }, 150);
 }
 
 // ---------- LISTADO DE MOTOS (con buscador + filtro) ----------
