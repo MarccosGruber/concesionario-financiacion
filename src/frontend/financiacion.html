@@ -377,6 +377,38 @@ const catalogo=[
 ];
 
 // ---------- SUBCATEGORÍAS ----------
+function renderSubcats(){
+  const subcats = [
+    ...new Set(
+      catalogo
+        .filter(m => m.categoria === marca)
+        .flatMap(m => m.sub)
+    )
+  ];
+
+  const chipsHtml = subcats.map(s => {
+    const label = (s.toUpperCase() === "SCOOTER" || s.toUpperCase() === "SCOOTERS") ? "SCOOTERS" : s;
+    return `<button class="chip" data-sub="${s}">${label}</button>`;
+  }).join('');
+
+  subcatsContainer.innerHTML =
+    `<button class="chip active" data-sub="">Todas</button>` + chipsHtml;
+
+  const chips = subcatsContainer.querySelectorAll(".chip");
+  chips.forEach(chip => {
+  chip.addEventListener("click", () => {
+    chips.forEach(c => c.classList.remove("active"));
+    chip.classList.add("active");
+
+    const value = chip.getAttribute("data-sub");
+    subcatSeleccionada = value ? value : null;
+
+    renderMotos();
+  });
+});
+}
+
+// ---------- LISTADO DE MOTOS (con buscador + filtro) ----------
 function renderMotos() {
   const grid = document.getElementById("vehiculos-grid");
 
@@ -419,39 +451,6 @@ function renderMotos() {
     });
 
   }, 150);
-}
-
-// ---------- LISTADO DE MOTOS (con buscador + filtro) ----------
-function renderMotos() {
-  const texto = buscador.value.toLowerCase().trim();
-
-  let lista = catalogo.filter(m => m.categoria === marca);
-
-  // FILTRO POR SUBCATEGORÍA SI HAY UNA SELECCIONADA
-  if (subcatSeleccionada) {
-    lista = lista.filter(m =>
-      m.sub.map(s => s.toLowerCase()).includes(subcatSeleccionada.toLowerCase())
-    );
-  }
-
-  // FILTRO POR BUSCADOR
-  if (texto.length > 0) {
-    lista = lista.filter(m =>
-      m.nombre.toLowerCase().includes(texto) ||
-      m.sub.some(s => s.toLowerCase().includes(texto))
-    );
-  }
-
-  // RENDER FINAL
-  document.getElementById("vehiculos-grid").innerHTML =
-    lista.length === 0
-      ? `<p style="text-align:center;color:#888;">No se encontraron modelos</p>`
-      : lista.map(m => `
-          <div class='card' onclick="seleccionarMoto('${m.nombre}')">
-            <img src='${m.img}'>
-            <h3>${m.nombre}</h3>
-          </div>
-        `).join('');
 }
 
 
