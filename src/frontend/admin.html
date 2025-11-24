@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <title>Panel Admin – Solicitudes</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <!-- Tailwind CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-50">
+
+<div id="root" class="min-h-screen"></div>
+
+<!-- React + ReactDOM -->
+<script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+<script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+<!-- Babel para poder usar JSX en este archivo -->
+<script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+<script type="text/babel">
+
+const { useState, useEffect } = React;
+
+function Login({ onLogin }) {
+  const [user, setUser] = useState('');
+  const [pass, setPass] = useState('');
+  const [err, setErr] = useState('');
+
+  async function handleSubmit(e) {
+    e.preventDefault();
+    setErr('');
+    try {
+      const res = await fetch('/admin/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user, pass })
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || 'Error al iniciar sesión');
+      localStorage.setItem('admin_jwt', json.token);
+      onLogin(json.token);
+    } catch (e) {
+      setErr(e.message);
+    }
+  }
+
+  return (
+    <div className="flex items-center justify-center min-h-screen bg-slate-50">
+      <form
+        onSubmit={handleSubmit}
+        className="bg-white shadow-lg rounded-2xl p-8 w-full max-w-sm border border-slate-200"
+      >
+        <h1 className="text-2xl font-bold mb-4 text-center">Acceso Admin</h1>
+        {err && (
+          <div className="bg-red-100 text-red-700 px-3 py-2 rounded mb-3 text-sm">
+            {err}
+          </div>
+        )}
+        <label className="block mb-2 text-sm font-medium">Usuario</label>
+        <input
+          className="w-full border rounded-lg px-3 py-2 mb-3 text-sm"
+          value={user}
+          onChange={e => setUser(e.target.value)}
+          autoComplete="username"
+        />
+        <label className="block mb-2 text-sm font-medium">Contraseña</label>
+        <input
+          type="password"
+          className="w-full border rounded-lg px-3 py-2 mb-4 text-sm"
+          value={pass}
+          onChange={e => setPass(e.target.value)}
+          autoComplete="current-password"
+        />
+        <button
+          type="submit"
+          className="w-full bg-slate-900 text-white py-2 rounded-lg text-sm font-semibold hover:bg-black transition"
+        >
+          Ingresar
+        </button>
+      </form>
+    </div>
+  );
+}
+
+function StatusBadge({ estado }) {
+  const map = {
+    enviado: 'bg-slate-100 text-slate-700',
+    nuevo: 'bg-blue-100 text-blue-800',
+    contactado: 'bg-amber-100 text-amber-800',
+    rechazado: 'bg-red-100 text-red-800',
+    aprobado: 'bg-emerald-100 text-emerald-800',
+  };
+  const cls = map[estado] || 'bg-slate-100 text-slate-700';
+  return (
+    <span className={`px-2 py-1 rounded-full text-xs font-medium ${cls}`}>
+      {estado}
+    </span>
+  );
+}
+
+function Dashboard({ token, onLogout }) {
+  const [data, setData] = useState([]);
+  const [search, setSearch] = useState('');
+  const [estado, setEstado] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [err, setErr] = useState('');
+
+  async function fetchData() {
+    setLoading(true);
+    setErr('');
+    try {
+      const params = new URLSearchParams();
+      if (search) params.set('search', search);
+      if (estado) params.set('estado', estado);
+      const res = await fetch('/admin/api/solicitudes?' + params.toString(), {
+        headers: { Authorization: 'Bearer ' + token }
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || 'Error cargando solicitudes');
+      setData(json.data || []);
+    } catch (e) {
+      setErr(e.message);
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    fetchData();
+    // eslint-disable-next-line
+  }, []);
+
+  async function cambiarEstado(id, nuevoEstado) {
+    try {
+      const res = await fetch(`/admin/api/solicitudes/${id}/estado`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + token
+        },
+        body: JSON.stringify({ estado: nuevoEstado })
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json.error || 'Error actualizando estado');
+
+      setData(prev => prev.map(s => 
+        s.id === id ? { ...s, estado: json.estado } : s
+      ));
+    } catch (e) {
+      alert(e.message);
+    }
+  }
+
+  function exportarCSV() {
+    const params = new URLSearchParams();
+    if (search) params.set('search', search);
+    if (estado) params.set('estado', estado);
+    params.set('token', token); // token por query para export
+    window.open('/admin/api/solicitudes/export?' + params.toString(), '_blank');
+  }
+
+  return (
+    <div className="min-h-screen flex flex-col">
+      <header className="bg-white border-b border-slate-200 px-6 py-3 flex items-center justify-between">
+        <h1 className="text-lg font-semibold">Panel Admin – Solicitudes</h1>
+        <div className="flex items-center gap-3">
+          <button
+            onClick={fetchData}
+            className="text-xs px-3 py-1 rounded-full border border-slate-200 hover:bg-slate-100"
+          >
+            Actualizar
+          </button>
+          <button
+            onClick={() => { localStorage.removeItem('admin_jwt'); onLogout(); }}
+            className="text-xs px-3 py-1 rounded-full border border-slate-200 hover:bg-slate-100"
+          >
+            Cerrar sesión
+          </button>
+        </div>
+      </header>
+
+      <main className="flex-1 px-6 py-4">
+        <div className="mb-4 flex flex-wrap gap-3 items-center">
+          <input
+            className="border border-slate-300 rounded-lg px-3 py-2 text-sm w-full sm:w-64"
+            placeholder="Buscar por nombre o vehículo..."
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+          />
+          <select
+            className="border border-slate-300 rounded-lg px-3 py-2 text-sm"
+            value={estado}
+            onChange={e => setEstado(e.target.value)}
+          >
+            <option value="">Todos los estados</option>
+            <option value="enviado">Enviado</option>
+            <option value="nuevo">Nuevo</option>
+            <option value="contactado">Contactado</option>
+            <option value="rechazado">Rechazado</option>
+            <option value="aprobado">Aprobado</option>
+          </select>
+          <button
+            onClick={fetchData}
+            className="bg-slate-900 text-white text-sm px-4 py-2 rounded-lg"
+          >
+            Filtrar
+          </button>
+          <button
+            onClick={exportarCSV}
+            className="border border-slate-300 text-sm px-4 py-2 rounded-lg bg-white hover:bg-slate-100"
+          >
+            Exportar CSV
+          </button>
+        </div>
+
+        {loading && <p className="text-sm text-slate-500 mb-2">Cargando...</p>}
+        {err && (
+          <div className="bg-red-100 text-red-700 px-3 py-2 rounded mb-3 text-sm">
+            {err}
+          </div>
+        )}
+
+        <div className="overflow-x-auto bg-white border border-slate-200 rounded-xl shadow-sm">
+          <table className="min-w-full text-sm">
+            <thead className="bg-slate-50 border-b border-slate-200">
+              <tr>
+                <th className="px-3 py-2 text-left">Fecha</th>
+                <th className="px-3 py-2 text-left">Nombre</th>
+                <th className="px-3 py-2 text-left">Teléfono</th>
+                <th className="px-3 py-2 text-left">DNI</th>
+                <th className="px-3 py-2 text-left">Vehículo</th>
+                <th className="px-3 py-2 text-left">Estado</th>
+                <th className="px-3 py-2 text-left">Origen</th>
+                <th className="px-3 py-2 text-left">Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              {data.length === 0 && !loading && (
+                <tr>
+                  <td colSpan="8" className="px-3 py-4 text-center text-slate-500">
+                    No hay solicitudes
+                  </td>
+                </tr>
+              )}
+              {data.map(s => (
+                <tr key={s.id} className="border-b border-slate-100 hover:bg-slate-50">
+                  <td className="px-3 py-2 align-top">
+                    {new Date(s.created_at).toLocaleString()}
+                  </td>
+                  <td className="px-3 py-2 align-top">
+                    <div className="font-medium">{s.nombre}</div>
+                    <div className="text-xs text-slate-500">{s.ip}</div>
+                  </td>
+                  <td className="px-3 py-2 align-top">{s.telefono}</td>
+                  <td className="px-3 py-2 align-top">{s.dni}</td>
+                  <td className="px-3 py-2 align-top">{s.vehiculo}</td>
+                  <td className="px-3 py-2 align-top">
+                    <StatusBadge estado={s.estado} />
+                  </td>
+                  <td className="px-3 py-2 align-top">
+                    {s.origen || '-'}
+                  </td>
+                  <td className="px-3 py-2 align-top">
+                    <select
+                      className="border border-slate-300 rounded px-2 py-1 text-xs"
+                      value={s.estado}
+                      onChange={e => cambiarEstado(s.id, e.target.value)}
+                    >
+                      <option value="enviado">Enviado</option>
+                      <option value="nuevo">Nuevo</option>
+                      <option value="contactado">Contactado</option>
+                      <option value="rechazado">Rechazado</option>
+                      <option value="aprobado">Aprobado</option>
+                    </select>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </main>
+    </div>
+  );
+}
+
+function App() {
+  const [token, setToken] = useState(() => localStorage.getItem('admin_jwt') || '');
+
+  if (!token) {
+    return <Login onLogin={setToken} />;
+  }
+
+  return <Dashboard token={token} onLogout={() => setToken('')} />;
+}
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<App />);
+
+</script>
+
+</body>
+</html>
